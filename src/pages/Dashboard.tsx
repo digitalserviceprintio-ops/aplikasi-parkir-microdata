@@ -2,10 +2,14 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Car, Bike, DollarSign, TrendingUp } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+
+const COLORS = ['hsl(174, 62%, 32%)', 'hsl(38, 92%, 50%)', 'hsl(210, 15%, 70%)'];
 
 const Dashboard = () => {
   const { profile } = useAuth();
-  const [stats, setStats] = useState({ totalToday: 0, activeNow: 0, revenueToday: 0, motorToday: 0, mobilToday: 0 });
+  const [stats, setStats] = useState({ totalToday: 0, activeNow: 0, revenueToday: 0, motorToday: 0, mobilToday: 0, lainnyaToday: 0 });
+  const [weeklyData, setWeeklyData] = useState<{ day: string; count: number; revenue: number }[]>([]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -18,20 +22,46 @@ const Dashboard = () => {
         .gte('entry_time', todayStart.toISOString());
 
       if (todayTx) {
-        const active = todayTx.filter(t => !t.exit_time).length;
-        const revenue = todayTx
-          .filter(t => t.payment_status === 'paid')
-          .reduce((sum, t) => sum + (t.total_price || 0), 0);
-        const motor = todayTx.filter(t => t.vehicle_type === 'motor').length;
-        const mobil = todayTx.filter(t => t.vehicle_type === 'mobil').length;
-
         setStats({
           totalToday: todayTx.length,
-          activeNow: active,
-          revenueToday: revenue,
-          motorToday: motor,
-          mobilToday: mobil,
+          activeNow: todayTx.filter(t => !t.exit_time).length,
+          revenueToday: todayTx.filter(t => t.payment_status === 'paid').reduce((s, t) => s + (t.total_price || 0), 0),
+          motorToday: todayTx.filter(t => t.vehicle_type === 'motor').length,
+          mobilToday: todayTx.filter(t => t.vehicle_type === 'mobil').length,
+          lainnyaToday: todayTx.filter(t => t.vehicle_type === 'lainnya').length,
         });
+      }
+
+      // Weekly data
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - 6);
+      weekStart.setHours(0, 0, 0, 0);
+
+      const { data: weekTx } = await supabase
+        .from('transactions')
+        .select('*')
+        .gte('entry_time', weekStart.toISOString());
+
+      if (weekTx) {
+        const days: { day: string; count: number; revenue: number }[] = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const dayStr = d.toLocaleDateString('id-ID', { weekday: 'short' });
+          const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+          const dayEnd = new Date(dayStart);
+          dayEnd.setDate(dayEnd.getDate() + 1);
+          const dayTx = weekTx.filter(t => {
+            const et = new Date(t.entry_time);
+            return et >= dayStart && et < dayEnd;
+          });
+          days.push({
+            day: dayStr,
+            count: dayTx.length,
+            revenue: dayTx.filter(t => t.payment_status === 'paid').reduce((s, t) => s + (t.total_price || 0), 0),
+          });
+        }
+        setWeeklyData(days);
       }
     };
 
@@ -48,6 +78,12 @@ const Dashboard = () => {
     { label: 'Sedang Parkir', value: stats.activeNow, icon: TrendingUp, color: 'bg-accent/10 text-accent' },
     { label: 'Pendapatan Hari Ini', value: formatCurrency(stats.revenueToday), icon: DollarSign, color: 'bg-success/10 text-success' },
   ];
+
+  const pieData = [
+    { name: 'Motor', value: stats.motorToday },
+    { name: 'Mobil', value: stats.mobilToday },
+    { name: 'Lainnya', value: stats.lainnyaToday },
+  ].filter(d => d.value > 0);
 
   return (
     <div className="space-y-6">
@@ -70,18 +106,51 @@ const Dashboard = () => {
         ))}
       </div>
 
+      {/* Weekly Bar Chart */}
+      <div className="bg-card rounded-xl border border-border p-4">
+        <h3 className="font-semibold mb-4">Kendaraan 7 Hari Terakhir</h3>
+        <ResponsiveContainer width="100%" height={180}>
+          <BarChart data={weeklyData}>
+            <XAxis dataKey="day" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+            <YAxis hide />
+            <Tooltip
+              contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+              formatter={(value: number, name: string) => [name === 'revenue' ? formatCurrency(value) : value, name === 'revenue' ? 'Pendapatan' : 'Kendaraan']}
+            />
+            <Bar dataKey="count" fill="hsl(174, 62%, 32%)" radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Pie Chart */}
       <div className="bg-card rounded-xl border border-border p-4">
         <h3 className="font-semibold mb-3">Jenis Kendaraan Hari Ini</h3>
-        <div className="flex gap-4">
-          <div className="flex items-center gap-2">
-            <Bike className="w-5 h-5 text-primary" />
-            <span className="text-sm">Motor: <strong>{stats.motorToday}</strong></span>
+        {pieData.length > 0 ? (
+          <div className="flex items-center gap-4">
+            <ResponsiveContainer width={120} height={120}>
+              <PieChart>
+                <Pie data={pieData} dataKey="value" cx="50%" cy="50%" outerRadius={50} innerRadius={30}>
+                  {pieData.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="space-y-2">
+              {pieData.map((d, i) => (
+                <div key={d.name} className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                  <span className="text-sm">{d.name}: <strong>{d.value}</strong></span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Car className="w-5 h-5 text-accent" />
-            <span className="text-sm">Mobil: <strong>{stats.mobilToday}</strong></span>
+        ) : (
+          <div className="flex items-center gap-4 text-muted-foreground">
+            <Bike className="w-5 h-5" />
+            <span className="text-sm">Belum ada kendaraan hari ini</span>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

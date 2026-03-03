@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import VehicleEntry from "./pages/VehicleEntry";
 import VehicleExit from "./pages/VehicleExit";
@@ -46,6 +47,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+      <Route path="/register" element={user ? <Navigate to="/" replace /> : <RegisterPage />} />
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/entry" element={<ProtectedRoute roles={['admin', 'attendant']}><VehicleEntry /></ProtectedRoute>} />
       <Route path="/exit" element={<ProtectedRoute roles={['admin', 'attendant']}><VehicleExit /></ProtectedRoute>} />
