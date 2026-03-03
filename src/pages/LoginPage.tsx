@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Car, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -66,6 +67,11 @@ const LoginPage = () => {
             {loading ? 'Masuk...' : 'Masuk'}
           </Button>
         </form>
+
+        <p className="text-center text-sm text-muted-foreground">
+          Belum punya akun?{' '}
+          <Link to="/register" className="text-primary font-semibold hover:underline">Daftar</Link>
+        </p>
       </div>
     </div>
   );
