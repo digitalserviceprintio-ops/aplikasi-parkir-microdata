@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Car, Bike, HelpCircle, LogIn } from 'lucide-react';
+import QrScanner from '@/components/QrScanner';
 
 const vehicleTypes = [
   { value: 'motor', label: 'Motor', icon: Bike },
@@ -17,7 +18,26 @@ const VehicleEntry = () => {
   const { user } = useAuth();
   const [plateNumber, setPlateNumber] = useState('');
   const [vehicleType, setVehicleType] = useState('motor');
+  const [cardCode, setCardCode] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleQrScan = async (code: string) => {
+    setCardCode(code);
+    // Look up card info
+    const { data } = await supabase
+      .from('parking_cards')
+      .select('*')
+      .eq('card_code', code)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (data) {
+      if (data.plate_number) setPlateNumber(data.plate_number);
+      setVehicleType(data.vehicle_type);
+      toast.success(`Kartu ditemukan: ${data.owner_name || code}`);
+    } else {
+      toast.info('Kartu tidak ditemukan, isi manual');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,8 +70,10 @@ const VehicleEntry = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-bold">Kendaraan Masuk</h1>
-        <p className="text-sm text-muted-foreground">Catat kendaraan yang masuk parkir</p>
+        <p className="text-sm text-muted-foreground">Catat kendaraan masuk — scan QR atau isi manual</p>
       </div>
+
+      <QrScanner onScan={handleQrScan} />
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">

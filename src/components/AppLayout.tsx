@@ -1,15 +1,17 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Car, LayoutDashboard, LogIn as LogInIcon, LogOut as LogOutIcon, FileText, Settings } from 'lucide-react';
+import { Car, LayoutDashboard, LogIn as LogInIcon, LogOut as LogOutIcon, FileText, Settings, Users, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'attendant', 'owner'] },
   { path: '/entry', label: 'Masuk', icon: LogInIcon, roles: ['admin', 'attendant'] },
   { path: '/exit', label: 'Keluar', icon: LogOutIcon, roles: ['admin', 'attendant'] },
+  { path: '/cards', label: 'Kartu', icon: CreditCard, roles: ['admin', 'attendant'] },
   { path: '/reports', label: 'Laporan', icon: FileText, roles: ['admin', 'owner'] },
-  { path: '/settings', label: 'Pengaturan', icon: Settings, roles: ['admin'] },
+  { path: '/users', label: 'Users', icon: Users, roles: ['admin'] },
+  { path: '/settings', label: 'Setelan', icon: Settings, roles: ['admin'] },
 ];
 
 const AppLayout = ({ children }: { children: ReactNode }) => {

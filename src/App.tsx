@@ -11,6 +11,8 @@ import VehicleEntry from "./pages/VehicleEntry";
 import VehicleExit from "./pages/VehicleExit";
 import Reports from "./pages/Reports";
 import SettingsPage from "./pages/SettingsPage";
+import UserManagement from "./pages/UserManagement";
+import ParkingCards from "./pages/ParkingCards";
 import AppLayout from "./components/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +54,8 @@ function AppRoutes() {
       <Route path="/entry" element={<ProtectedRoute roles={['admin', 'attendant']}><VehicleEntry /></ProtectedRoute>} />
       <Route path="/exit" element={<ProtectedRoute roles={['admin', 'attendant']}><VehicleExit /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute roles={['admin', 'owner']}><Reports /></ProtectedRoute>} />
+      <Route path="/cards" element={<ProtectedRoute roles={['admin', 'attendant']}><ParkingCards /></ProtectedRoute>} />
+      <Route path="/users" element={<ProtectedRoute roles={['admin']}><UserManagement /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute roles={['admin']}><SettingsPage /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
