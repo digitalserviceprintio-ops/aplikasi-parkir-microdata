@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      parking_cards: {
+        Row: {
+          card_code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          owner_name: string | null
+          plate_number: string | null
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          card_code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          owner_name?: string | null
+          plate_number?: string | null
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Update: {
+          card_code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          owner_name?: string | null
+          plate_number?: string | null
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parking_cards_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parking_rates: {
         Row: {
           created_at: string
@@ -48,6 +92,7 @@ export type Database = {
           id: string
           name: string
           role: string
+          status: string
           updated_at: string
         }
         Insert: {
@@ -56,6 +101,7 @@ export type Database = {
           id: string
           name: string
           role?: string
+          status?: string
           updated_at?: string
         }
         Update: {
@@ -64,12 +110,14 @@ export type Database = {
           id?: string
           name?: string
           role?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
       }
       transactions: {
         Row: {
+          card_id: string | null
           created_at: string
           created_by: string | null
           entry_time: string
@@ -83,6 +131,7 @@ export type Database = {
           vehicle_type: string
         }
         Insert: {
+          card_id?: string | null
           created_at?: string
           created_by?: string | null
           entry_time?: string
@@ -96,6 +145,7 @@ export type Database = {
           vehicle_type: string
         }
         Update: {
+          card_id?: string | null
           created_at?: string
           created_by?: string | null
           entry_time?: string
@@ -109,6 +159,13 @@ export type Database = {
           vehicle_type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "transactions_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "parking_cards"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "transactions_created_by_fkey"
             columns: ["created_by"]
