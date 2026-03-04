@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import bgSplash from '@/assets/bg-splash.jpg';
 
 const LoginPage = () => {
   const { signIn } = useAuth();
@@ -27,17 +28,25 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm space-y-8">
+    <div
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${bgSplash})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
+      <div className="w-full max-w-sm space-y-8 relative z-10">
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/90 shadow-lg mb-4">
             <Car className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight">ParkEasy</h1>
           <p className="text-muted-foreground text-sm">Sistem parkir sederhana & mudah</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 glass-card rounded-2xl p-6">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -47,7 +56,7 @@ const LoginPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-12"
+              className="h-12 bg-background/50"
             />
           </div>
           <div className="space-y-2">
@@ -59,10 +68,10 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="h-12"
+              className="h-12 bg-background/50"
             />
           </div>
-          <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={loading}>
+          <Button type="submit" className="w-full h-12 text-base font-semibold shadow-lg" disabled={loading}>
             <LogIn className="w-5 h-5 mr-2" />
             {loading ? 'Masuk...' : 'Masuk'}
           </Button>
