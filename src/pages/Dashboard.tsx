@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Car, Bike, DollarSign, TrendingUp } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-const COLORS = ['hsl(174, 62%, 32%)', 'hsl(38, 92%, 50%)', 'hsl(210, 15%, 70%)'];
+const COLORS = ['hsl(260, 50%, 60%)', 'hsl(20, 80%, 65%)', 'hsl(160, 50%, 42%)'];
 
 const Dashboard = () => {
   const { profile } = useAuth();
@@ -117,7 +117,7 @@ const Dashboard = () => {
               contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
               formatter={(value: number, name: string) => [name === 'revenue' ? formatCurrency(value) : value, name === 'revenue' ? 'Pendapatan' : 'Kendaraan']}
             />
-            <Bar dataKey="count" fill="hsl(174, 62%, 32%)" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="count" fill="hsl(260, 50%, 60%)" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

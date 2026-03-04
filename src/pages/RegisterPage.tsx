@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import bgSplash from '@/assets/bg-splash.jpg';
 
 const roles = [
   { value: 'attendant', label: 'Petugas Parkir', icon: Users, desc: 'Catat kendaraan masuk & keluar' },
@@ -45,28 +46,36 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm space-y-6">
+    <div
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${bgSplash})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
+      <div className="w-full max-w-sm space-y-6 relative z-10">
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/90 shadow-lg mb-4">
             <Car className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Daftar Akun</h1>
           <p className="text-muted-foreground text-sm">Buat akun baru untuk ParkEasy</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 glass-card rounded-2xl p-6">
           <div className="space-y-2">
             <Label>Nama Lengkap</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama lengkap" required className="h-12" />
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama lengkap" required className="h-12 bg-background/50" />
           </div>
           <div className="space-y-2">
             <Label>Email</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" required className="h-12" />
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" required className="h-12 bg-background/50" />
           </div>
           <div className="space-y-2">
             <Label>Password</Label>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 karakter" required className="h-12" />
+            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 karakter" required className="h-12 bg-background/50" />
           </div>
           <div className="space-y-2">
             <Label>Role</Label>
@@ -77,7 +86,7 @@ const RegisterPage = () => {
                   type="button"
                   onClick={() => setRole(r.value)}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${
-                    role === r.value ? 'border-primary bg-primary/10' : 'border-border bg-card'
+                    role === r.value ? 'border-primary bg-primary/10' : 'border-border/50 bg-card/50'
                   }`}
                 >
                   <r.icon className={`w-5 h-5 ${role === r.value ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -89,7 +98,7 @@ const RegisterPage = () => {
               ))}
             </div>
           </div>
-          <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={loading}>
+          <Button type="submit" className="w-full h-12 text-base font-semibold shadow-lg" disabled={loading}>
             <UserPlus className="w-5 h-5 mr-2" />
             {loading ? 'Mendaftar...' : 'Daftar'}
           </Button>
