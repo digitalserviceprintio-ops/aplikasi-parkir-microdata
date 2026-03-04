@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { LogOut, Search, Clock, DollarSign } from 'lucide-react';
+import QrScanner from '@/components/QrScanner';
 
 interface ActiveVehicle {
   id: string;
@@ -13,6 +14,8 @@ interface ActiveVehicle {
   entry_time: string;
   duration: string;
   totalPrice: number;
+  card_code?: string;
+  owner_name?: string;
 }
 
 const VehicleExit = () => {
@@ -48,18 +51,24 @@ const VehicleExit = () => {
     return hours * rates.rate_amount;
   };
 
-  const handleSearch = async () => {
-    if (!search.trim()) return;
+  const findAndSetVehicle = async (query: { plate_number?: string; card_id?: string }) => {
     setSearching(true);
     try {
-      const { data, error } = await supabase
+      let q = supabase
         .from('transactions')
-        .select('*')
-        .eq('plate_number', search.toUpperCase().trim())
+        .select('*, parking_cards(card_code, owner_name)')
         .is('exit_time', null)
         .order('entry_time', { ascending: false })
-        .limit(1)
-        .single();
+        .limit(1);
+
+      if (query.plate_number) {
+        q = q.eq('plate_number', query.plate_number);
+      }
+      if (query.card_id) {
+        q = q.eq('card_id', query.card_id);
+      }
+
+      const { data, error } = await q.single();
 
       if (error || !data) {
         toast.error('Kendaraan tidak ditemukan atau sudah keluar');
@@ -68,6 +77,7 @@ const VehicleExit = () => {
       }
 
       const totalPrice = await calculatePrice(data.vehicle_type, data.entry_time);
+      const card = data.parking_cards as any;
 
       setVehicle({
         id: data.id,
@@ -76,11 +86,34 @@ const VehicleExit = () => {
         entry_time: data.entry_time,
         duration: calculateDuration(data.entry_time),
         totalPrice,
+        card_code: card?.card_code,
+        owner_name: card?.owner_name,
       });
     } catch {
       toast.error('Gagal mencari kendaraan');
     } finally {
       setSearching(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!search.trim()) return;
+    await findAndSetVehicle({ plate_number: search.toUpperCase().trim() });
+  };
+
+  const handleQrScan = async (code: string) => {
+    // Find card by code, then find active transaction by card_id
+    const { data: card } = await supabase
+      .from('parking_cards')
+      .select('id')
+      .eq('card_code', code)
+      .maybeSingle();
+
+    if (card) {
+      await findAndSetVehicle({ card_id: card.id });
+    } else {
+      // Fallback: treat scanned code as plate number
+      await findAndSetVehicle({ plate_number: code.toUpperCase().trim() });
     }
   };
 
@@ -120,6 +153,8 @@ const VehicleExit = () => {
         <p className="text-sm text-muted-foreground">Proses kendaraan keluar & pembayaran</p>
       </div>
 
+      <QrScanner onScan={handleQrScan} />
+
       <div className="flex gap-2">
         <Input
           value={search}
@@ -138,6 +173,12 @@ const VehicleExit = () => {
           <div className="bg-primary/10 p-4 text-center">
             <p className="text-2xl font-black tracking-widest text-primary">{vehicle.plate_number}</p>
             <p className="text-sm text-muted-foreground capitalize mt-1">{vehicle.vehicle_type}</p>
+            {vehicle.owner_name && (
+              <p className="text-xs text-muted-foreground mt-1">Pemilik: {vehicle.owner_name}</p>
+            )}
+            {vehicle.card_code && (
+              <p className="text-xs text-muted-foreground">Kartu: {vehicle.card_code}</p>
+            )}
           </div>
 
           <div className="p-4 space-y-3">
