@@ -21,9 +21,10 @@ const VehicleEntry = () => {
   const [cardCode, setCardCode] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [cardId, setCardId] = useState<string | null>(null);
+
   const handleQrScan = async (code: string) => {
     setCardCode(code);
-    // Look up card info
     const { data } = await supabase
       .from('parking_cards')
       .select('*')
@@ -31,10 +32,12 @@ const VehicleEntry = () => {
       .eq('is_active', true)
       .maybeSingle();
     if (data) {
+      setCardId(data.id);
       if (data.plate_number) setPlateNumber(data.plate_number);
       setVehicleType(data.vehicle_type);
       toast.success(`Kartu ditemukan: ${data.owner_name || code}`);
     } else {
+      setCardId(null);
       toast.info('Kartu tidak ditemukan, isi manual');
     }
   };
@@ -53,12 +56,15 @@ const VehicleEntry = () => {
         vehicle_type: vehicleType,
         entry_time: new Date().toISOString(),
         created_by: user?.id,
+        card_id: cardId,
       });
 
       if (error) throw error;
 
       toast.success(`${plateNumber.toUpperCase()} berhasil masuk!`);
       setPlateNumber('');
+      setCardId(null);
+      setCardCode('');
     } catch (err: any) {
       toast.error(err.message || 'Gagal mencatat kendaraan masuk');
     } finally {
