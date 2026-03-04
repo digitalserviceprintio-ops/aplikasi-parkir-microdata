@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { CreditCard, Plus, Trash2, QrCode } from 'lucide-react';
+import { CreditCard, Plus, Trash2, QrCode, Download } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface ParkingCard {
@@ -83,6 +83,26 @@ const ParkingCards = () => {
     setVehicleType('motor');
   };
 
+  const downloadQr = (card: ParkingCard) => {
+    const svg = document.querySelector('#qr-download-area svg') as SVGElement;
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    canvas.width = 400; canvas.height = 400;
+    const ctx = canvas.getContext('2d')!;
+    const img = new Image();
+    img.onload = () => {
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, 400, 400);
+      ctx.drawImage(img, 0, 0, 400, 400);
+      const a = document.createElement('a');
+      a.download = `${card.card_code}.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -139,12 +159,18 @@ const ParkingCards = () => {
           <DialogHeader>
             <DialogTitle>QR Code Kartu</DialogTitle>
           </DialogHeader>
-          {selectedCard && (
+      {selectedCard && (
             <div className="flex flex-col items-center gap-4 py-4">
-              <QRCodeSVG value={selectedCard.card_code} size={200} />
+              <div id="qr-download-area">
+                <QRCodeSVG value={selectedCard.card_code} size={200} />
+              </div>
               <p className="font-mono text-sm font-bold">{selectedCard.card_code}</p>
               {selectedCard.owner_name && <p className="text-sm text-muted-foreground">{selectedCard.owner_name}</p>}
               {selectedCard.plate_number && <p className="text-sm font-semibold">{selectedCard.plate_number}</p>}
+              <Button variant="outline" size="sm" onClick={() => downloadQr(selectedCard)}>
+                <Download className="w-4 h-4 mr-1" />
+                Download QR
+              </Button>
             </div>
           )}
         </DialogContent>
