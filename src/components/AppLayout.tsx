@@ -1,8 +1,10 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Car, LayoutDashboard, LogIn as LogInIcon, LogOut as LogOutIcon, FileText, Settings, Users, CreditCard } from 'lucide-react';
+import { Car, LayoutDashboard, LogIn as LogInIcon, LogOut as LogOutIcon, FileText, Settings, Users, CreditCard, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import PageTransition from '@/components/PageTransition';
 import bgSplash from '@/assets/bg-splash.jpg';
 
 const navItems = [
@@ -17,6 +19,7 @@ const navItems = [
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
   const { profile, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -42,11 +45,14 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
           </div>
           <span className="font-bold text-lg">ParkEasy</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <span className="text-xs text-muted-foreground capitalize bg-secondary/80 px-2 py-1 rounded-full">
             {profile?.role}
           </span>
-          <Button variant="ghost" size="sm" onClick={signOut}>
+          <Button variant="ghost" size="icon" className="w-8 h-8" onClick={toggleTheme}>
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </Button>
+          <Button variant="ghost" size="icon" className="w-8 h-8" onClick={signOut}>
             <LogOutIcon className="w-4 h-4" />
           </Button>
         </div>
@@ -54,7 +60,9 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
 
       {/* Content */}
       <main className="flex-1 p-4 pb-24 max-w-lg mx-auto w-full relative z-10">
-        {children}
+        <PageTransition key={location.pathname}>
+          {children}
+        </PageTransition>
       </main>
 
       {/* Bottom Navigation */}
