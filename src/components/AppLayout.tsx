@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Car, LayoutDashboard, LogIn as LogInIcon, LogOut as LogOutIcon, FileText, Settings, Users, CreditCard, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageTransition from '@/components/PageTransition';
+import { motion } from 'framer-motion';
 import bgSplash from '@/assets/bg-splash.jpg';
 
 const navItems = [
@@ -40,21 +41,30 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
       {/* Header */}
       <header className="sticky top-0 z-50 glass-card px-4 py-3 flex items-center justify-between rounded-none border-x-0 border-t-0">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary shadow-md flex items-center justify-center">
+          <motion.div
+            whileHover={{ rotate: [0, -15, 15, 0] }}
+            whileTap={{ scale: 0.85 }}
+            transition={{ duration: 0.4 }}
+            className="w-8 h-8 rounded-lg bg-primary shadow-md flex items-center justify-center"
+          >
             <Car className="w-4 h-4 text-primary-foreground" />
-          </div>
+          </motion.div>
           <span className="font-bold text-lg">ParkEasy</span>
         </div>
         <div className="flex items-center gap-1">
           <span className="text-xs text-muted-foreground capitalize bg-secondary/80 px-2 py-1 rounded-full">
             {profile?.role}
           </span>
-          <Button variant="ghost" size="icon" className="w-8 h-8" onClick={toggleTheme}>
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </Button>
-          <Button variant="ghost" size="icon" className="w-8 h-8" onClick={signOut}>
-            <LogOutIcon className="w-4 h-4" />
-          </Button>
+          <motion.div whileTap={{ scale: 0.85 }} whileHover={{ rotate: 180 }} transition={{ duration: 0.3 }}>
+            <Button variant="ghost" size="icon" className="w-8 h-8" onClick={toggleTheme}>
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
+          </motion.div>
+          <motion.div whileTap={{ scale: 0.85 }}>
+            <Button variant="ghost" size="icon" className="w-8 h-8" onClick={signOut}>
+              <LogOutIcon className="w-4 h-4" />
+            </Button>
+          </motion.div>
         </div>
       </header>
 
@@ -71,16 +81,26 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
           {filteredNav.map(item => {
             const isActive = location.pathname === item.path;
             return (
-              <button
+              <motion.button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${
-                  isActive ? 'text-primary bg-primary/10 shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.85, y: 0 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors relative ${
+                  isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <item.icon className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{item.label}</span>
-              </button>
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-indicator"
+                    className="absolute inset-0 bg-primary/10 rounded-xl shadow-sm"
+                    transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                  />
+                )}
+                <item.icon className="w-5 h-5 relative z-10" />
+                <span className="text-[10px] font-medium relative z-10">{item.label}</span>
+              </motion.button>
             );
           })}
         </div>
