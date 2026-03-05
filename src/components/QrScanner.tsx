@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Button } from '@/components/ui/button';
-import { Camera, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Camera, X, Keyboard } from 'lucide-react';
 
 interface QrScannerProps {
   onScan: (result: string) => void;
@@ -9,10 +10,14 @@ interface QrScannerProps {
 
 const QrScanner = ({ onScan }: QrScannerProps) => {
   const [scanning, setScanning] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
+  const [manualCode, setManualCode] = useState('');
+  const [cameraError, setCameraError] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const containerId = 'qr-reader';
 
   const startScanner = async () => {
+    setCameraError(false);
     setScanning(true);
     try {
       const scanner = new Html5Qrcode(containerId);
@@ -28,7 +33,9 @@ const QrScanner = ({ onScan }: QrScannerProps) => {
       );
     } catch (err) {
       console.error('Camera error:', err);
+      setCameraError(true);
       setScanning(false);
+      setManualMode(true);
     }
   };
 
@@ -40,18 +47,31 @@ const QrScanner = ({ onScan }: QrScannerProps) => {
     setScanning(false);
   };
 
+  const handleManualSubmit = () => {
+    if (manualCode.trim()) {
+      onScan(manualCode.trim());
+      setManualCode('');
+      setManualMode(false);
+    }
+  };
+
   useEffect(() => {
     return () => { stopScanner(); };
   }, []);
 
   return (
     <div className="space-y-3">
-      {!scanning ? (
-        <Button onClick={startScanner} variant="outline" className="w-full h-12">
-          <Camera className="w-5 h-5 mr-2" />
-          Scan QR Code
-        </Button>
-      ) : (
+      {!scanning && !manualMode ? (
+        <div className="flex gap-2">
+          <Button onClick={startScanner} variant="outline" className="flex-1 h-12">
+            <Camera className="w-5 h-5 mr-2" />
+            Scan QR Code
+          </Button>
+          <Button onClick={() => setManualMode(true)} variant="outline" className="h-12">
+            <Keyboard className="w-5 h-5" />
+          </Button>
+        </div>
+      ) : scanning ? (
         <div className="space-y-2">
           <div id={containerId} className="rounded-xl overflow-hidden border border-border" />
           <Button onClick={stopScanner} variant="outline" className="w-full" size="sm">
@@ -59,7 +79,26 @@ const QrScanner = ({ onScan }: QrScannerProps) => {
             Tutup Kamera
           </Button>
         </div>
-      )}
+      ) : manualMode ? (
+        <div className="space-y-2">
+          {cameraError && (
+            <p className="text-xs text-destructive text-center">Kamera tidak tersedia. Masukkan kode kartu secara manual.</p>
+          )}
+          <div className="flex gap-2">
+            <Input
+              value={manualCode}
+              onChange={(e) => setManualCode(e.target.value)}
+              placeholder="Masukkan kode kartu..."
+              className="h-12 font-mono"
+              onKeyDown={(e) => e.key === 'Enter' && handleManualSubmit()}
+            />
+            <Button onClick={handleManualSubmit} className="h-12 px-4">OK</Button>
+            <Button onClick={() => { setManualMode(false); setCameraError(false); }} variant="ghost" className="h-12 px-3">
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
