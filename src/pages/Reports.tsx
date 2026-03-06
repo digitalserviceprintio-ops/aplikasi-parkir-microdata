@@ -41,7 +41,7 @@ const Reports = () => {
 
       const { data } = await supabase
         .from('transactions')
-        .select('*')
+        .select('*, parking_cards(card_code, owner_name)')
         .gte('entry_time', startDate.toISOString())
         .order('entry_time', { ascending: false });
 
@@ -97,11 +97,17 @@ const Reports = () => {
         {report.transactions.length === 0 ? (
           <p className="text-center text-muted-foreground py-8 text-sm">Belum ada transaksi</p>
         ) : (
-          report.transactions.map((tx) => (
+          report.transactions.map((tx: any) => (
             <div key={tx.id} className="bg-card rounded-xl border border-border p-3 flex items-center justify-between">
               <div>
                 <p className="font-bold text-sm">{tx.plate_number}</p>
                 <p className="text-xs text-muted-foreground capitalize">{tx.vehicle_type} · {formatTime(tx.entry_time)}</p>
+                {tx.parking_cards?.owner_name && (
+                  <p className="text-xs text-muted-foreground">Pemilik: {tx.parking_cards.owner_name}</p>
+                )}
+                {tx.parking_cards?.card_code && (
+                  <p className="text-[10px] text-muted-foreground font-mono">Kartu: {tx.parking_cards.card_code}</p>
+                )}
               </div>
               <div className="text-right">
                 {tx.exit_time ? (

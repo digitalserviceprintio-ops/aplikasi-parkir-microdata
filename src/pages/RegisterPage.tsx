@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import { Car, UserPlus, Shield, Eye, Users } from 'lucide-react';
+import PasswordInput from '@/components/PasswordInput';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -75,7 +76,7 @@ const RegisterPage = () => {
           </div>
           <div className="space-y-2">
             <Label>Password</Label>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 karakter" required className="h-12 bg-background/50" />
+            <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 karakter" required className="h-12 bg-background/50" />
           </div>
           <div className="space-y-2">
             <Label>Role</Label>
