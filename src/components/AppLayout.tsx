@@ -15,7 +15,6 @@ const navItems = [
   { path: '/cards', label: 'Kartu', icon: CreditCard, roles: ['admin', 'attendant'] },
   { path: '/reports', label: 'Laporan', icon: FileText, roles: ['admin', 'owner'] },
   { path: '/users', label: 'Users', icon: Users, roles: ['admin'] },
-  { path: '/settings', label: 'Setelan', icon: Settings, roles: ['admin'] },
 ];
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
@@ -55,6 +54,13 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
           <span className="text-xs text-muted-foreground capitalize bg-secondary/80 px-2 py-1 rounded-full">
             {profile?.role}
           </span>
+          {profile?.role === 'admin' && (
+            <motion.div whileTap={{ scale: 0.85 }}>
+              <Button variant="ghost" size="icon" className="w-8 h-8" onClick={() => navigate('/settings')}>
+                <Settings className="w-4 h-4" />
+              </Button>
+            </motion.div>
+          )}
           <motion.div whileTap={{ scale: 0.85 }} whileHover={{ rotate: 180 }} transition={{ duration: 0.3 }}>
             <Button variant="ghost" size="icon" className="w-8 h-8" onClick={toggleTheme}>
               {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
