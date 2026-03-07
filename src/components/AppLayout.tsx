@@ -25,6 +25,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
 
   const filteredNav = navItems.filter(item => profile && item.roles.includes(profile.role));
+  useParkingNotifications();
 
   return (
     <div
