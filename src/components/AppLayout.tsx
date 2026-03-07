@@ -38,7 +38,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
       <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 glass-card px-4 py-3 flex items-center justify-between rounded-none border-x-0 border-t-0">
+      <header className="sticky top-0 z-50 glass-card px-3 sm:px-6 py-3 flex items-center justify-between rounded-none border-x-0 border-t-0">
         <div className="flex items-center gap-2">
           <motion.div
             whileHover={{ rotate: [0, -15, 15, 0] }}
@@ -48,10 +48,10 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
           >
             <Car className="w-4 h-4 text-primary-foreground" />
           </motion.div>
-          <span className="font-bold text-lg">ParkEasy</span>
+          <span className="font-bold text-base sm:text-lg">ParkEasy</span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-xs text-muted-foreground capitalize bg-secondary/80 px-2 py-1 rounded-full">
+          <span className="text-[10px] sm:text-xs text-muted-foreground capitalize bg-secondary/80 px-2 py-1 rounded-full">
             {profile?.role}
           </span>
           {profile?.role === 'admin' && (
@@ -75,14 +75,14 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
       </header>
 
       {/* Content */}
-      <main className="flex-1 p-4 pb-24 max-w-lg mx-auto w-full relative z-10">
+      <main className="flex-1 p-3 sm:p-4 md:p-6 pb-24 max-w-4xl mx-auto w-full relative z-10">
         <PageTransition key={location.pathname}>
           {children}
         </PageTransition>
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 glass-card px-2 py-2 z-50 rounded-none border-x-0 border-b-0">
+      <nav className="fixed bottom-0 left-0 right-0 glass-card px-2 py-2 z-50 rounded-none border-x-0 border-b-0 safe-area-bottom">
         <div className="flex justify-around max-w-lg mx-auto">
           {filteredNav.map(item => {
             const isActive = location.pathname === item.path;
@@ -93,7 +93,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
                 whileHover={{ y: -3 }}
                 whileTap={{ scale: 0.85, y: 0 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors relative ${
+                className={`flex flex-col items-center gap-0.5 px-2 sm:px-3 py-1.5 rounded-xl transition-colors relative ${
                   isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
