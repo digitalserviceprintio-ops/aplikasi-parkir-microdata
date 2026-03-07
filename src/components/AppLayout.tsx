@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useParkingNotifications } from '@/hooks/useParkingNotifications';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Car, LayoutDashboard, LogIn as LogInIcon, LogOut as LogOutIcon, FileText, Settings, Users, CreditCard, Moon, Sun } from 'lucide-react';
@@ -24,6 +25,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
 
   const filteredNav = navItems.filter(item => profile && item.roles.includes(profile.role));
+  useParkingNotifications();
 
   return (
     <div
