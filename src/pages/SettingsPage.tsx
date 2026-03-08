@@ -275,15 +275,15 @@ const SettingsPage = () => {
     }
   };
 
-  const tabs: { key: Tab; label: string; icon: typeof DollarSign; desc: string; color: string }[] = [
-    { key: 'rates', label: 'Tarif Parkir', icon: DollarSign, desc: 'Atur tarif per jenis kendaraan', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
-    { key: 'business', label: 'Profil Usaha', icon: Building2, desc: 'Nama usaha, alamat & telepon', color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
-    { key: 'printer', label: 'Printer', icon: Printer, desc: 'Hubungkan printer Bluetooth', color: 'bg-violet-500/10 text-violet-600 dark:text-violet-400' },
-    { key: 'notifications', label: 'Notifikasi', icon: Bell, desc: 'Peringatan parkir terlalu lama', color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
-    { key: 'backup', label: 'Backup & Impor', icon: DatabaseBackup, desc: 'Backup dan pulihkan data', color: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400' },
-    { key: 'install', label: 'Install Aplikasi', icon: Download, desc: 'Panduan install APK & PWA', color: 'bg-green-500/10 text-green-600 dark:text-green-400' },
-    { key: 'about', label: 'Tentang', icon: Info, desc: 'Info & versi aplikasi', color: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' },
-    { key: 'faq', label: 'FAQ', icon: HelpCircle, desc: 'Pertanyaan yang sering ditanya', color: 'bg-rose-500/10 text-rose-600 dark:text-rose-400' },
+  const tabs: { key: Tab; label: string; shortLabel: string; icon: typeof DollarSign; desc: string; color: string }[] = [
+    { key: 'rates', label: 'Tarif Parkir', shortLabel: 'Tarif', icon: DollarSign, desc: 'Atur tarif per jenis kendaraan', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
+    { key: 'business', label: 'Profil Usaha', shortLabel: 'Usaha', icon: Building2, desc: 'Nama usaha, alamat & telepon', color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
+    { key: 'printer', label: 'Printer', shortLabel: 'Printer', icon: Printer, desc: 'Hubungkan printer Bluetooth', color: 'bg-violet-500/10 text-violet-600 dark:text-violet-400' },
+    { key: 'notifications', label: 'Notifikasi', shortLabel: 'Notif', icon: Bell, desc: 'Peringatan parkir terlalu lama', color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
+    { key: 'backup', label: 'Backup & Impor', shortLabel: 'Backup', icon: DatabaseBackup, desc: 'Backup dan pulihkan data', color: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400' },
+    { key: 'install', label: 'Install Aplikasi', shortLabel: 'Install', icon: Download, desc: 'Panduan install APK & PWA', color: 'bg-green-500/10 text-green-600 dark:text-green-400' },
+    { key: 'about', label: 'Tentang', shortLabel: 'Tentang', icon: Info, desc: 'Info & versi aplikasi', color: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' },
+    { key: 'faq', label: 'FAQ', shortLabel: 'FAQ', icon: HelpCircle, desc: 'Pertanyaan yang sering ditanya', color: 'bg-rose-500/10 text-rose-600 dark:text-rose-400' },
   ];
 
   const activeTabData = tabs.find(t => t.key === activeTab);
