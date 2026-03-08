@@ -117,6 +117,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         </div>
       </nav>
     </div>
+    </>
   );
 };
 
