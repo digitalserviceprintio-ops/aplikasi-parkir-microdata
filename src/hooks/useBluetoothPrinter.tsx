@@ -68,7 +68,7 @@ export function buildEntryTicket(opts: {
     ...esc(ESC, 0x61, 0x01),
     ...line('================================'),
     ...line('Simpan tiket ini untuk keluar.'),
-    ...line('Powered by ParkEasy'),
+    ...line('Powered by Mikrodata 2R'),
     LF, LF, LF,
     // Partial cut
     ...esc(GS, 0x56, 0x01),
