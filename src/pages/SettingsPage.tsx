@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Save, Building2, DollarSign, Bell, Info, HelpCircle, ChevronDown } from 'lucide-react';
+import { getAppVersion } from '@/components/AppUpdateDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
@@ -328,7 +329,7 @@ const SettingsPage = () => {
               </div>
               <div>
                 <h2 className="text-xl font-bold">ParkEasy</h2>
-                <p className="text-xs text-muted-foreground">Versi 1.0.0</p>
+                <p className="text-xs text-muted-foreground">Versi {localStorage.getItem('app_latest_version') || getAppVersion()}</p>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Sistem manajemen parkir digital yang memudahkan pencatatan kendaraan masuk & keluar, penghitungan tarif otomatis, dan pelaporan pendapatan secara real-time.
