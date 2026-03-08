@@ -78,7 +78,10 @@ const SettingsPage = () => {
     Number(localStorage.getItem('parking_overtime_hours')) || 3
   );
 
-  // Printer (shared hook)
+  // APK download URL
+  const [apkUrl, setApkUrl] = useState(() => localStorage.getItem('apk_download_url') || '');
+  const [apkUrlEditing, setApkUrlEditing] = useState(false);
+
   const {
     isSupported: isBtSupported,
     connected: printerConnected,
