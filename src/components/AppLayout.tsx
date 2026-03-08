@@ -29,6 +29,8 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
   useParkingNotifications();
 
   return (
+    <>
+    <AppUpdateDialog />
     <div
       className="min-h-screen flex flex-col relative"
       style={{
