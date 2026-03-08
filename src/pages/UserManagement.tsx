@@ -149,12 +149,11 @@ const UserManagement = () => {
     if (!selectedUser) return;
     setFormLoading(true);
     try {
-      // Soft delete by setting status to inactive and clearing data
-      const { error } = await supabase
-        .from('profiles')
-        .update({ status: 'deleted' })
-        .eq('id', selectedUser.id);
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { user_id: selectedUser.id },
+      });
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       toast.success('User berhasil dihapus');
       setUsers(prev => prev.filter(u => u.id !== selectedUser.id));
