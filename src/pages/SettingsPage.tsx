@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Save, Building2, DollarSign, Bell, Info, HelpCircle, Printer, Bluetooth, BluetoothOff, FileText, Download, Smartphone, Monitor, ChevronRight, DatabaseBackup, Upload } from 'lucide-react';
+import { Save, Building2, DollarSign, Bell, Info, HelpCircle, Printer, Bluetooth, BluetoothOff, FileText, Download, Smartphone, Monitor, ChevronRight, DatabaseBackup, Upload, ArrowLeft } from 'lucide-react';
 import { getAppVersion } from '@/components/AppUpdateDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -18,7 +18,7 @@ interface Rate {
   rate_amount: number;
 }
 
-type Tab = 'rates' | 'business' | 'printer' | 'notifications' | 'backup' | 'install' | 'about' | 'faq';
+type Tab = 'menu' | 'rates' | 'business' | 'printer' | 'notifications' | 'backup' | 'install' | 'about' | 'faq';
 
 const faqData = [
   {
@@ -65,7 +65,7 @@ const SettingsPage = () => {
   const { profile, user } = useAuth();
   const [rates, setRates] = useState<Rate[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<Tab>('rates');
+  const [activeTab, setActiveTab] = useState<Tab>('menu');
 
   // Business profile state
   const [businessName, setBusinessName] = useState('');
@@ -275,46 +275,76 @@ const SettingsPage = () => {
     }
   };
 
-  const tabs: { key: Tab; label: string; icon: typeof DollarSign }[] = [
-    { key: 'rates', label: 'Tarif', icon: DollarSign },
-    { key: 'business', label: 'Usaha', icon: Building2 },
-    { key: 'printer', label: 'Printer', icon: Printer },
-    { key: 'notifications', label: 'Notif', icon: Bell },
-    { key: 'backup', label: 'Backup', icon: DatabaseBackup },
-    { key: 'install', label: 'Install', icon: Download },
-    { key: 'about', label: 'Tentang', icon: Info },
-    { key: 'faq', label: 'FAQ', icon: HelpCircle },
+  const tabs: { key: Tab; label: string; icon: typeof DollarSign; desc: string; color: string }[] = [
+    { key: 'rates', label: 'Tarif Parkir', icon: DollarSign, desc: 'Atur tarif per jenis kendaraan', color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
+    { key: 'business', label: 'Profil Usaha', icon: Building2, desc: 'Nama usaha, alamat & telepon', color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
+    { key: 'printer', label: 'Printer', icon: Printer, desc: 'Hubungkan printer Bluetooth', color: 'bg-violet-500/10 text-violet-600 dark:text-violet-400' },
+    { key: 'notifications', label: 'Notifikasi', icon: Bell, desc: 'Peringatan parkir terlalu lama', color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
+    { key: 'backup', label: 'Backup & Impor', icon: DatabaseBackup, desc: 'Backup dan pulihkan data', color: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400' },
+    { key: 'install', label: 'Install Aplikasi', icon: Download, desc: 'Panduan install APK & PWA', color: 'bg-green-500/10 text-green-600 dark:text-green-400' },
+    { key: 'about', label: 'Tentang', icon: Info, desc: 'Info & versi aplikasi', color: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' },
+    { key: 'faq', label: 'FAQ', icon: HelpCircle, desc: 'Pertanyaan yang sering ditanya', color: 'bg-rose-500/10 text-rose-600 dark:text-rose-400' },
   ];
+
+  const activeTabData = tabs.find(t => t.key === activeTab);
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
-      <h1 className="text-xl sm:text-2xl font-bold">Pengaturan</h1>
-
-      {/* Tab switcher - responsive */}
-      <div className="flex gap-1 bg-secondary/50 p-1 rounded-xl overflow-x-auto no-scrollbar">
-        {tabs.map(tab => (
+      {/* Header with back button */}
+      <div className="flex items-center gap-3">
+        {activeTab !== 'menu' && (
           <motion.button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            whileTap={{ scale: 0.95 }}
-            className={`flex-1 min-w-0 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-lg text-[11px] sm:text-sm font-semibold transition-colors relative whitespace-nowrap ${
-              activeTab === tab.key ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
-            }`}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            onClick={() => setActiveTab('menu')}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors shrink-0"
           >
-            {activeTab === tab.key && (
-              <motion.div
-                layoutId="settings-tab"
-                className="absolute inset-0 bg-primary rounded-lg"
-                transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-              />
-            )}
-            <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10 shrink-0" />
-            <span className="relative z-10 truncate">{tab.label}</span>
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </motion.button>
-        ))}
+        )}
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold">
+            {activeTab === 'menu' ? 'Pengaturan' : activeTabData?.label}
+          </h1>
+          {activeTab !== 'menu' && activeTabData && (
+            <p className="text-xs text-muted-foreground truncate">{activeTabData.desc}</p>
+          )}
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
+        {/* Grid Navigation Menu */}
+        {activeTab === 'menu' && (
+          <motion.div
+            key="menu"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.2 }}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3"
+          >
+            {tabs.map((tab, i) => (
+              <motion.button
+                key={tab.key}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setActiveTab(tab.key)}
+                className="bg-card rounded-xl border border-border p-3.5 sm:p-4 text-left hover:border-primary/30 hover:shadow-md transition-all group space-y-2.5 sm:space-y-3"
+              >
+                <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl ${tab.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
+                  <tab.icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+                </div>
+                <div className="space-y-0.5">
+                  <p className="font-semibold text-sm sm:text-[15px] leading-tight">{tab.label}</p>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-snug line-clamp-2">{tab.desc}</p>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary transition-colors ml-auto" />
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
         {activeTab === 'rates' && (
           <motion.div
             key="rates"
