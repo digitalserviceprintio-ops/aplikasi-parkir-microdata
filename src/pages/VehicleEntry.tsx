@@ -21,8 +21,18 @@ const VehicleEntry = () => {
   const [vehicleType, setVehicleType] = useState('motor');
   const [cardCode, setCardCode] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [cardId, setCardId] = useState<string | null>(null);
+  const [ownerName, setOwnerName] = useState<string | null>(null);
+  const [receiptData, setReceiptData] = useState<any>(null);
+  const [businessName, setBusinessName] = useState('');
+
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      const { data } = await supabase.from('business_profiles').select('business_name').limit(1).maybeSingle();
+      if (data) setBusinessName(data.business_name);
+    };
+    fetchBusiness();
+  }, []);
 
   const handleQrScan = async (code: string) => {
     setCardCode(code);
