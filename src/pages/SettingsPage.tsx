@@ -507,6 +507,98 @@ const SettingsPage = () => {
           </motion.div>
         )}
 
+        {activeTab === 'install' && (
+          <motion.div
+            key="install"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-3 sm:space-y-4"
+          >
+            {/* Android APK */}
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
+                  <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm">Install di Android (APK)</h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Cara install aplikasi ParkEasy di HP Android</p>
+                </div>
+              </div>
+              <ol className="text-[11px] sm:text-xs text-muted-foreground space-y-2 list-decimal list-inside">
+                <li>Dapatkan file <strong>ParkEasy.apk</strong> dari admin atau link download yang diberikan</li>
+                <li>Buka file APK di HP Android Anda</li>
+                <li>Jika muncul peringatan keamanan, buka <strong>Pengaturan → Keamanan → Sumber Tidak Dikenal</strong> dan aktifkan</li>
+                <li>Ketuk <strong>"Install"</strong> dan tunggu proses selesai</li>
+                <li>Buka aplikasi ParkEasy dari layar utama</li>
+                <li>Login dengan akun yang sudah terdaftar</li>
+              </ol>
+              <div className="bg-secondary/50 rounded-lg p-2.5">
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+                  💡 <strong>Tips:</strong> Pastikan versi Android minimal 7.0 (Nougat) ke atas untuk kompatibilitas terbaik.
+                </p>
+              </div>
+            </div>
+
+            {/* Browser / PWA */}
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm">Akses via Browser</h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Buka langsung dari browser tanpa install</p>
+                </div>
+              </div>
+              <ol className="text-[11px] sm:text-xs text-muted-foreground space-y-2 list-decimal list-inside">
+                <li>Buka browser <strong>Google Chrome</strong> di HP atau komputer</li>
+                <li>Kunjungi alamat: <strong className="text-foreground select-all">parkir-aman.lovable.app</strong></li>
+                <li>Login dengan akun Anda</li>
+                <li className="font-medium text-foreground">Opsional — tambah ke layar utama:</li>
+              </ol>
+
+              <div className="ml-4 space-y-2">
+                <div className="bg-secondary/30 rounded-lg p-2.5 space-y-1">
+                  <p className="text-[11px] font-medium flex items-center gap-1"><Smartphone className="w-3 h-3" /> Android:</p>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground">Ketuk menu ⋮ → <strong>"Tambahkan ke layar utama"</strong> → Ketuk <strong>"Tambah"</strong></p>
+                </div>
+                <div className="bg-secondary/30 rounded-lg p-2.5 space-y-1">
+                  <p className="text-[11px] font-medium flex items-center gap-1"><Smartphone className="w-3 h-3" /> iPhone/iPad:</p>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground">Ketuk ikon <strong>Share (↑)</strong> → <strong>"Tambah ke Layar Utama"</strong> → <strong>"Tambah"</strong></p>
+                </div>
+              </div>
+            </div>
+
+            {/* Troubleshooting */}
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-3">
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 text-primary" />
+                Masalah Umum
+              </h3>
+              <Accordion type="single" collapsible className="space-y-1">
+                {[
+                  { q: 'APK tidak bisa di-install', a: 'Pastikan opsi "Sumber Tidak Dikenal" sudah diaktifkan di Pengaturan HP. Pada Android 8+, izin per-aplikasi bisa diatur di Pengaturan → Aplikasi → Chrome → Install aplikasi yang tidak dikenal.' },
+                  { q: 'Aplikasi tidak bisa login', a: 'Pastikan koneksi internet stabil. Coba bersihkan cache aplikasi di Pengaturan HP → Aplikasi → ParkEasy → Hapus Cache.' },
+                  { q: 'Kamera/QR scanner tidak berfungsi', a: 'Pastikan izin kamera sudah diberikan. Buka Pengaturan HP → Aplikasi → ParkEasy → Izin → aktifkan Kamera.' },
+                  { q: 'Printer Bluetooth tidak terdeteksi', a: 'Pastikan printer menyala dan mode Bluetooth aktif. Gunakan browser Chrome untuk kompatibilitas Web Bluetooth terbaik.' },
+                ].map((item, i) => (
+                  <AccordionItem key={i} value={`install-faq-${i}`} className="border-b border-border/50 last:border-0">
+                    <AccordionTrigger className="text-xs sm:text-sm font-medium text-left py-2.5 hover:no-underline">
+                      {item.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-xs sm:text-sm text-muted-foreground pb-2.5">
+                      {item.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </motion.div>
+        )}
+
         {activeTab === 'faq' && (
           <motion.div
             key="faq"
