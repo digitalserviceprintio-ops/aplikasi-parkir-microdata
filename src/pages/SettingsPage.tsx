@@ -54,7 +54,7 @@ const faqData = [
 // Test receipt builder using shared hook's format
 function buildTestReceipt(): Uint8Array {
   return buildEntryTicket({
-    businessName: 'ParkEasy',
+    businessName: 'Parkir Mikrodata 2R',
     plateNumber: 'TES-1234',
     vehicleType: 'motor',
     entryTime: new Date().toISOString(),
