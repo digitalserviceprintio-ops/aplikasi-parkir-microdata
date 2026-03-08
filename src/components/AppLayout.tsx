@@ -14,7 +14,7 @@ const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'attendant', 'owner'] },
   { path: '/entry', label: 'Masuk', icon: LogInIcon, roles: ['admin', 'attendant'] },
   { path: '/exit', label: 'Keluar', icon: LogOutIcon, roles: ['admin', 'attendant'] },
-  { path: '/cards', label: 'Kartu', icon: CreditCard, roles: ['admin', 'attendant'] },
+  { path: '/cards', label: 'Kartu Member', icon: CreditCard, roles: ['admin', 'attendant'] },
   { path: '/reports', label: 'Laporan', icon: FileText, roles: ['admin', 'owner'] },
   { path: '/users', label: 'Users', icon: Users, roles: ['admin'] },
 ];
