@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Printer } from 'lucide-react';
+import { Printer, Bluetooth } from 'lucide-react';
 import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
+import { useBluetoothPrinter, buildEntryTicket } from '@/hooks/useBluetoothPrinter';
 
 interface EntryReceiptData {
   plateNumber: string;
@@ -19,13 +20,24 @@ const formatDateTime = (iso: string) =>
 
 const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; businessName?: string }) => {
   const qrCanvasRef = useRef<HTMLDivElement>(null);
+  const { connected, connecting, printing, printerName, connect, printData } = useBluetoothPrinter();
 
   const qrValue = data.plateNumber;
 
+  const handleBtPrint = async () => {
+    const ticket = buildEntryTicket({
+      businessName: businessName || 'ParkEasy',
+      plateNumber: data.plateNumber,
+      vehicleType: data.vehicleType,
+      entryTime: data.entryTime,
+      cardCode: data.cardCode,
+      ownerName: data.ownerName,
+    });
+    await printData(ticket);
+  };
+
   const handlePrint = () => {
     const name = businessName || 'ParkEasy';
-
-    // Get QR code as data URL from hidden canvas
     const canvas = qrCanvasRef.current?.querySelector('canvas');
     const qrDataUrl = canvas?.toDataURL('image/png') || '';
 
@@ -106,10 +118,24 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
         {data.cardCode && <div className="flex justify-between"><span className="text-muted-foreground">Kartu</span><span>{data.cardCode}</span></div>}
         {data.ownerName && <div className="flex justify-between"><span className="text-muted-foreground">Pemilik</span><span>{data.ownerName}</span></div>}
       </div>
-      <Button onClick={handlePrint} className="w-full h-11 mt-3 font-semibold" variant="outline">
-        <Printer className="w-4 h-4 mr-2" />
-        Cetak Tiket
-      </Button>
+
+      <div className="grid grid-cols-2 gap-2 mt-3">
+        <Button onClick={handlePrint} className="h-11 font-semibold" variant="outline">
+          <Printer className="w-4 h-4 mr-2" />
+          Cetak
+        </Button>
+        {connected ? (
+          <Button onClick={handleBtPrint} className="h-11 font-semibold" disabled={printing}>
+            <Bluetooth className="w-4 h-4 mr-2" />
+            {printing ? 'Mencetak...' : 'BT Print'}
+          </Button>
+        ) : (
+          <Button onClick={connect} className="h-11 font-semibold" variant="secondary" disabled={connecting}>
+            <Bluetooth className="w-4 h-4 mr-2" />
+            {connecting ? 'Hubungkan...' : printerName ? `Sambung ${printerName}` : 'BT Printer'}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
