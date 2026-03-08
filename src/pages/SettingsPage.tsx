@@ -18,7 +18,7 @@ interface Rate {
   rate_amount: number;
 }
 
-type Tab = 'rates' | 'business' | 'printer' | 'notifications' | 'backup' | 'install' | 'about' | 'faq';
+type Tab = 'menu' | 'rates' | 'business' | 'printer' | 'notifications' | 'backup' | 'install' | 'about' | 'faq';
 
 const faqData = [
   {
