@@ -505,7 +505,7 @@ const SettingsPage = () => {
             </div>
 
             <div className="bg-card rounded-xl border border-border p-3 sm:p-4 space-y-1.5">
-              <p className="text-[11px] sm:text-xs text-muted-foreground">© {new Date().getFullYear()} ParkEasy. All rights reserved.</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground">© {new Date().getFullYear()} Parkir Mikrodata 2R. All rights reserved.</p>
             </div>
           </motion.div>
         )}
