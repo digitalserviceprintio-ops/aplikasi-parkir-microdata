@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Save, Building2, DollarSign, Bell, Info, HelpCircle, Printer, Bluetooth, BluetoothOff, FileText, Download, Smartphone, Monitor, ChevronRight } from 'lucide-react';
+import { Save, Building2, DollarSign, Bell, Info, HelpCircle, Printer, Bluetooth, BluetoothOff, FileText, Download, Smartphone, Monitor, ChevronRight, DatabaseBackup, Upload } from 'lucide-react';
 import { getAppVersion } from '@/components/AppUpdateDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
