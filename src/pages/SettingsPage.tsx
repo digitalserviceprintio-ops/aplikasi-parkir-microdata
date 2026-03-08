@@ -51,79 +51,14 @@ const faqData = [
   },
 ];
 
-// Bluetooth Printer Helper
-const THERMAL_PRINTER_SERVICE = '000018f0-0000-1000-8000-00805f9b34fb';
-const THERMAL_PRINTER_CHAR = '00002af1-0000-1000-8000-00805f9b34fb';
-
-const ESC = 0x1B;
-const GS = 0x1D;
-const LF = 0x0A;
-
+// Test receipt builder using shared hook's format
 function buildTestReceipt(): Uint8Array {
-  const encoder = new TextEncoder();
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-
-  const lines: number[] = [];
-
-  // Initialize printer
-  lines.push(ESC, 0x40); // ESC @ - Initialize
-  
-  // Center align
-  lines.push(ESC, 0x61, 0x01);
-  
-  // Bold on
-  lines.push(ESC, 0x45, 0x01);
-  
-  // Double size
-  lines.push(GS, 0x21, 0x11);
-  lines.push(...encoder.encode('ParkEasy'));
-  lines.push(LF);
-  
-  // Normal size
-  lines.push(GS, 0x21, 0x00);
-  lines.push(ESC, 0x45, 0x00); // Bold off
-  
-  lines.push(...encoder.encode('================================'));
-  lines.push(LF);
-  
-  lines.push(ESC, 0x45, 0x01);
-  lines.push(...encoder.encode('TES PRINT BERHASIL!'));
-  lines.push(LF);
-  lines.push(ESC, 0x45, 0x00);
-  
-  lines.push(...encoder.encode('================================'));
-  lines.push(LF);
-  
-  // Left align
-  lines.push(ESC, 0x61, 0x00);
-  
-  lines.push(...encoder.encode(`Tanggal : ${dateStr}`));
-  lines.push(LF);
-  lines.push(...encoder.encode(`Waktu   : ${timeStr}`));
-  lines.push(LF);
-  lines.push(...encoder.encode(`Status  : Terhubung`));
-  lines.push(LF);
-  
-  // Center align
-  lines.push(ESC, 0x61, 0x01);
-  lines.push(...encoder.encode('================================'));
-  lines.push(LF);
-  lines.push(...encoder.encode('Printer Bluetooth siap digunakan'));
-  lines.push(LF);
-  lines.push(...encoder.encode('untuk cetak tiket parkir.'));
-  lines.push(LF);
-  lines.push(...encoder.encode('================================'));
-  lines.push(LF);
-  lines.push(LF);
-  lines.push(LF);
-  lines.push(LF);
-
-  // Cut paper (partial)
-  lines.push(GS, 0x56, 0x01);
-
-  return new Uint8Array(lines);
+  return buildEntryTicket({
+    businessName: 'ParkEasy',
+    plateNumber: 'TES-1234',
+    vehicleType: 'motor',
+    entryTime: new Date().toISOString(),
+  });
 }
 
 const SettingsPage = () => {
