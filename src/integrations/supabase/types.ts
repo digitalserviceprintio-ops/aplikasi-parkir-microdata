@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_announcements: {
+        Row: {
+          app_version: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          message: string
+          title: string
+          type: string
+        }
+        Insert: {
+          app_version?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          message: string
+          title: string
+          type?: string
+        }
+        Update: {
+          app_version?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          message?: string
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       business_profiles: {
         Row: {
           address: string | null
@@ -46,6 +76,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      licenses: {
+        Row: {
+          created_at: string
+          id: string
+          is_permanent: boolean
+          is_used: boolean
+          license_key: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_permanent?: boolean
+          is_used?: boolean
+          license_key: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_permanent?: boolean
+          is_used?: boolean
+          license_key?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licenses_used_by_fkey"
+            columns: ["used_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       parking_cards: {
         Row: {
