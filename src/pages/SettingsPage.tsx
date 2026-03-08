@@ -531,7 +531,7 @@ const SettingsPage = () => {
                 </div>
               </div>
               <ol className="text-[11px] sm:text-xs text-muted-foreground space-y-2 list-decimal list-inside">
-                <li>Dapatkan file <strong>ParkEasy.apk</strong> dari admin atau link download yang diberikan</li>
+                <li>Dapatkan file <strong>Mikrodata2R.apk</strong> dari admin atau link download yang diberikan</li>
                 <li>Buka file APK di HP Android Anda</li>
                 <li>Jika muncul peringatan keamanan, buka <strong>Pengaturan → Keamanan → Sumber Tidak Dikenal</strong> dan aktifkan</li>
                 <li>Ketuk <strong>"Install"</strong> dan tunggu proses selesai</li>
