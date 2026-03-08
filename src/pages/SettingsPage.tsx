@@ -143,16 +143,16 @@ const SettingsPage = () => {
   );
 
   // Printer state
-  const [printerDevice, setPrinterDevice] = useState<BluetoothDevice | null>(null);
+  const [printerDevice, setPrinterDevice] = useState<any>(null);
   const [printerName, setPrinterName] = useState<string>(() =>
     localStorage.getItem('bt_printer_name') || ''
   );
   const [printerConnecting, setPrinterConnecting] = useState(false);
   const [printerConnected, setPrinterConnected] = useState(false);
   const [testPrinting, setTestPrinting] = useState(false);
-  const [characteristic, setCharacteristic] = useState<BluetoothRemoteGATTCharacteristic | null>(null);
+  const [characteristic, setCharacteristic] = useState<any>(null);
 
-  const isBtSupported = typeof navigator !== 'undefined' && 'bluetooth' in navigator;
+  const isBtSupported = typeof navigator !== 'undefined' && 'bluetooth' in (navigator as any);
 
   const handleConnectPrinter = useCallback(async () => {
     if (!isBtSupported) {
