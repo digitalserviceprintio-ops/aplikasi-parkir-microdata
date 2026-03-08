@@ -727,6 +727,68 @@ const SettingsPage = () => {
           </motion.div>
         )}
 
+        {activeTab === 'backup' && (
+          <motion.div
+            key="backup"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-3 sm:space-y-4"
+          >
+            {/* Backup */}
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-3 sm:space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <DatabaseBackup className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm">Backup Data</h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Unduh seluruh data transaksi, kartu parkir, dan pengaturan ke file JSON</p>
+                </div>
+              </div>
+              <Button onClick={handleBackupData} disabled={backupLoading} className="w-full h-11 sm:h-12 font-semibold">
+                <Download className="w-4 h-4 mr-2" />
+                {backupLoading ? 'Mengunduh backup...' : 'Download Backup Data'}
+              </Button>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+                💡 File backup berisi: transaksi, kartu parkir, tarif, profil user, dan profil usaha.
+              </p>
+            </div>
+
+            {/* Import */}
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-3 sm:space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+                  <Upload className="w-4 h-4 sm:w-5 sm:h-5 text-accent-foreground" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm">Impor Data</h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Pulihkan data dari file backup JSON yang sudah diunduh sebelumnya</p>
+                </div>
+              </div>
+              <label className="block">
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleImportData}
+                  disabled={importLoading}
+                  className="hidden"
+                />
+                <div className="w-full h-11 sm:h-12 font-semibold border-2 border-dashed border-border rounded-lg flex items-center justify-center gap-2 text-sm cursor-pointer hover:bg-secondary/50 transition-colors">
+                  <Upload className="w-4 h-4" />
+                  {importLoading ? 'Mengimpor data...' : 'Pilih File Backup (.json)'}
+                </div>
+              </label>
+              <div className="bg-destructive/10 rounded-lg p-2.5 sm:p-3">
+                <p className="text-[10px] sm:text-[11px] text-destructive font-medium">
+                  ⚠️ Perhatian: Impor data akan menimpa data yang sudah ada jika ID-nya sama. Pastikan file backup benar sebelum mengimpor.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )
+
         {activeTab === 'faq' && (
           <motion.div
             key="faq"
