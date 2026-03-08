@@ -321,7 +321,7 @@ const SettingsPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3"
+            className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-4 gap-2 sm:gap-3"
           >
             {tabs.map((tab, i) => (
               <motion.button
@@ -331,16 +331,13 @@ const SettingsPage = () => {
                 transition={{ delay: i * 0.04 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setActiveTab(tab.key)}
-                className="bg-card rounded-xl border border-border p-3.5 sm:p-4 text-left hover:border-primary/30 hover:shadow-md transition-all group space-y-2.5 sm:space-y-3"
+                className="bg-card rounded-xl border border-border p-2 sm:p-4 text-center sm:text-left hover:border-primary/30 hover:shadow-md transition-all group flex flex-col items-center sm:items-start gap-1.5 sm:gap-2.5"
               >
-                <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl ${tab.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
-                  <tab.icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+                <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl ${tab.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
+                  <tab.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="space-y-0.5">
-                  <p className="font-semibold text-sm sm:text-[15px] leading-tight">{tab.label}</p>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-snug line-clamp-2">{tab.desc}</p>
-                </div>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary transition-colors ml-auto" />
+                <p className="font-semibold text-[10px] sm:text-[15px] leading-tight truncate w-full">{tab.label}</p>
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-snug line-clamp-2 hidden sm:block">{tab.desc}</p>
               </motion.button>
             ))}
           </motion.div>
