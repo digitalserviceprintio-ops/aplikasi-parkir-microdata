@@ -103,7 +103,7 @@ export function buildExitReceipt(opts: {
     ...esc(ESC, 0x61, 0x01),
     ...esc(GS, 0x21, 0x11),
     ...esc(ESC, 0x45, 0x01),
-    ...line(opts.businessName || 'ParkEasy'),
+    ...line(opts.businessName || 'Parkir Mikrodata 2R'),
     ...esc(GS, 0x21, 0x00),
     ...esc(ESC, 0x45, 0x00),
     ...line('Sistem Parkir Digital'),
