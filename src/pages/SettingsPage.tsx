@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Save, Building2, DollarSign, Bell, Info, HelpCircle, Printer, Bluetooth
 import { getAppVersion } from '@/components/AppUpdateDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useBluetoothPrinter, buildEntryTicket } from '@/hooks/useBluetoothPrinter';
 
 interface Rate {
   id: string;
