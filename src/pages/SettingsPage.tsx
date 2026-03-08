@@ -621,8 +621,8 @@ const SettingsPage = () => {
               <Accordion type="single" collapsible className="space-y-1">
                 {[
                   { q: 'APK tidak bisa di-install', a: 'Pastikan opsi "Sumber Tidak Dikenal" sudah diaktifkan di Pengaturan HP. Pada Android 8+, izin per-aplikasi bisa diatur di Pengaturan → Aplikasi → Chrome → Install aplikasi yang tidak dikenal.' },
-                  { q: 'Aplikasi tidak bisa login', a: 'Pastikan koneksi internet stabil. Coba bersihkan cache aplikasi di Pengaturan HP → Aplikasi → ParkEasy → Hapus Cache.' },
-                  { q: 'Kamera/QR scanner tidak berfungsi', a: 'Pastikan izin kamera sudah diberikan. Buka Pengaturan HP → Aplikasi → ParkEasy → Izin → aktifkan Kamera.' },
+                  { q: 'Aplikasi tidak bisa login', a: 'Pastikan koneksi internet stabil. Coba bersihkan cache aplikasi di Pengaturan HP → Aplikasi → Parkir Mikrodata 2R → Hapus Cache.' },
+                  { q: 'Kamera/QR scanner tidak berfungsi', a: 'Pastikan izin kamera sudah diberikan. Buka Pengaturan HP → Aplikasi → Parkir Mikrodata 2R → Izin → aktifkan Kamera.' },
                   { q: 'Printer Bluetooth tidak terdeteksi', a: 'Pastikan printer menyala dan mode Bluetooth aktif. Gunakan browser Chrome untuk kompatibilitas Web Bluetooth terbaik.' },
                 ].map((item, i) => (
                   <AccordionItem key={i} value={`install-faq-${i}`} className="border-b border-border/50 last:border-0">
