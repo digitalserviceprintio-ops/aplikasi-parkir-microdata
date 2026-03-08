@@ -79,7 +79,7 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
           <div class="row bold"><span>TOTAL:</span><span>${formatCurrency(data.totalPrice)}</span></div>
           <div class="line"></div>
           <p class="center small">Terima kasih telah parkir di sini!</p>
-          <p class="center small">Powered by ParkEasy</p>
+          <p class="center small">Powered by Mikrodata 2R</p>
           <script>window.onload = function() { window.print(); window.close(); }<\/script>
         </body>
       </html>
