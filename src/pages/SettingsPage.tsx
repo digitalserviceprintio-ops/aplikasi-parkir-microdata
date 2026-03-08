@@ -188,8 +188,6 @@ const SettingsPage = () => {
     return <p className="text-center text-muted-foreground py-8">Akses hanya untuk admin</p>;
   }
 
-  const [backupLoading, setBackupLoading] = useState(false);
-  const [importLoading, setImportLoading] = useState(false);
 
   const handleBackupData = async () => {
     setBackupLoading(true);
