@@ -1,5 +1,7 @@
+import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Printer } from 'lucide-react';
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
 
 interface EntryReceiptData {
   plateNumber: string;
@@ -16,8 +18,17 @@ const formatDateTime = (iso: string) =>
   });
 
 const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; businessName?: string }) => {
+  const qrCanvasRef = useRef<HTMLDivElement>(null);
+
+  const qrValue = data.plateNumber;
+
   const handlePrint = () => {
     const name = businessName || 'ParkEasy';
+
+    // Get QR code as data URL from hidden canvas
+    const canvas = qrCanvasRef.current?.querySelector('canvas');
+    const qrDataUrl = canvas?.toDataURL('image/png') || '';
+
     const html = `
       <html>
         <head>
@@ -33,6 +44,8 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
             h2 { font-size: 16px; margin-bottom: 2px; }
             .small { font-size: 10px; color: #666; }
             .label { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
+            .qr { margin: 8px auto; }
+            .qr img { width: 140px; height: 140px; }
           </style>
         </head>
         <body>
@@ -45,19 +58,20 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
           <div class="line"></div>
           <div class="center big bold">${data.plateNumber}</div>
           <p class="center small" style="text-transform:capitalize">${data.vehicleType}</p>
+          <div class="center qr"><img src="${qrDataUrl}" alt="QR Code" /></div>
           <div class="line"></div>
           <div class="row"><span>Waktu Masuk:</span><span>${formatDateTime(data.entryTime)}</span></div>
           ${data.cardCode ? `<div class="row"><span>Kartu:</span><span>${data.cardCode}</span></div>` : ''}
           ${data.ownerName ? `<div class="row"><span>Pemilik:</span><span>${data.ownerName}</span></div>` : ''}
           <div class="line"></div>
-          <p class="center small">Simpan tiket ini untuk keluar.</p>
+          <p class="center small">Scan QR untuk proses keluar.</p>
           <p class="center small">Powered by ParkEasy</p>
           <script>window.onload = function() { window.print(); window.close(); }<\/script>
         </body>
       </html>
     `;
 
-    const printWindow = window.open('', '_blank', 'width=320,height=400');
+    const printWindow = window.open('', '_blank', 'width=320,height=500');
     if (!printWindow) return;
     printWindow.document.write(html);
     printWindow.document.close();
@@ -74,12 +88,24 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
         <p className="text-muted-foreground capitalize">{data.vehicleType}</p>
         <div className="border-t border-dashed border-border my-2" />
       </div>
+
+      {/* QR Code display */}
+      <div className="flex justify-center py-2">
+        <QRCodeSVG value={qrValue} size={140} level="M" />
+      </div>
+      <p className="text-center text-muted-foreground text-[10px]">Scan QR ini saat keluar</p>
+
+      {/* Hidden canvas for print */}
+      <div ref={qrCanvasRef} className="hidden">
+        <QRCodeCanvas value={qrValue} size={280} level="M" />
+      </div>
+
+      <div className="border-t border-dashed border-border my-2" />
       <div className="space-y-1">
         <div className="flex justify-between"><span className="text-muted-foreground">Waktu Masuk</span><span>{formatDateTime(data.entryTime)}</span></div>
         {data.cardCode && <div className="flex justify-between"><span className="text-muted-foreground">Kartu</span><span>{data.cardCode}</span></div>}
         {data.ownerName && <div className="flex justify-between"><span className="text-muted-foreground">Pemilik</span><span>{data.ownerName}</span></div>}
       </div>
-      <p className="text-center text-muted-foreground text-[10px] mt-2">Simpan tiket ini untuk proses keluar</p>
       <Button onClick={handlePrint} className="w-full h-11 mt-3 font-semibold" variant="outline">
         <Printer className="w-4 h-4 mr-2" />
         Cetak Tiket
