@@ -28,7 +28,7 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
 
   const handleBtPrint = async () => {
     const receipt = buildExitReceipt({
-      businessName: businessName || 'ParkEasy',
+      businessName: businessName || 'Parkir Mikrodata 2R',
       plateNumber: data.plateNumber,
       vehicleType: data.vehicleType,
       entryTime: data.entryTime,
@@ -43,7 +43,7 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
   };
 
   const handlePrint = () => {
-    const name = businessName || 'ParkEasy';
+    const name = businessName || 'Parkir Mikrodata 2R';
     const html = `
       <html>
         <head>
@@ -79,7 +79,7 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
           <div class="row bold"><span>TOTAL:</span><span>${formatCurrency(data.totalPrice)}</span></div>
           <div class="line"></div>
           <p class="center small">Terima kasih telah parkir di sini!</p>
-          <p class="center small">Powered by ParkEasy</p>
+          <p class="center small">Powered by Mikrodata 2R</p>
           <script>window.onload = function() { window.print(); window.close(); }<\/script>
         </body>
       </html>
@@ -94,7 +94,7 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
   return (
     <div className="bg-card rounded-xl border border-border p-4 space-y-2 font-mono text-xs">
       <div className="text-center space-y-1">
-        <p className="font-bold text-sm">{businessName || 'ParkEasy'}</p>
+        <p className="font-bold text-sm">{businessName || 'Parkir Mikrodata 2R'}</p>
         <div className="border-t border-dashed border-border my-2" />
         <p className="text-lg font-black tracking-widest text-primary">{data.plateNumber}</p>
         <p className="text-muted-foreground capitalize">{data.vehicleType}</p>

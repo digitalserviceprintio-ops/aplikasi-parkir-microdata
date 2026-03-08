@@ -43,7 +43,7 @@ export function buildEntryTicket(opts: {
     // Double size + Bold
     ...esc(GS, 0x21, 0x11),
     ...esc(ESC, 0x45, 0x01),
-    ...line(opts.businessName || 'ParkEasy'),
+    ...line(opts.businessName || 'Parkir Mikrodata 2R'),
     // Normal
     ...esc(GS, 0x21, 0x00),
     ...esc(ESC, 0x45, 0x00),
@@ -68,7 +68,7 @@ export function buildEntryTicket(opts: {
     ...esc(ESC, 0x61, 0x01),
     ...line('================================'),
     ...line('Simpan tiket ini untuk keluar.'),
-    ...line('Powered by ParkEasy'),
+    ...line('Powered by Mikrodata 2R'),
     LF, LF, LF,
     // Partial cut
     ...esc(GS, 0x56, 0x01),
@@ -103,7 +103,7 @@ export function buildExitReceipt(opts: {
     ...esc(ESC, 0x61, 0x01),
     ...esc(GS, 0x21, 0x11),
     ...esc(ESC, 0x45, 0x01),
-    ...line(opts.businessName || 'ParkEasy'),
+    ...line(opts.businessName || 'Parkir Mikrodata 2R'),
     ...esc(GS, 0x21, 0x00),
     ...esc(ESC, 0x45, 0x00),
     ...line('Sistem Parkir Digital'),
@@ -133,7 +133,7 @@ export function buildExitReceipt(opts: {
     ...esc(ESC, 0x61, 0x01),
     ...line('================================'),
     ...line('Terima kasih telah parkir!'),
-    ...line('Powered by ParkEasy'),
+    ...line('Powered by Mikrodata 2R'),
     LF, LF, LF,
     ...esc(GS, 0x56, 0x01),
   ];

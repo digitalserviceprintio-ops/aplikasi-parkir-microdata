@@ -53,7 +53,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
           >
             <Car className="w-4 h-4 text-primary-foreground" />
           </motion.div>
-          <span className="font-bold text-base sm:text-lg">ParkEasy</span>
+          <span className="font-bold text-base sm:text-lg">Parkir Mikrodata 2R</span>
         </div>
         <div className="flex items-center gap-1">
           <span className="text-[10px] sm:text-xs text-muted-foreground capitalize bg-secondary/80 px-2 py-1 rounded-full">

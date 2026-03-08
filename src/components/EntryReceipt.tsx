@@ -26,7 +26,7 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
 
   const handleBtPrint = async () => {
     const ticket = buildEntryTicket({
-      businessName: businessName || 'ParkEasy',
+      businessName: businessName || 'Parkir Mikrodata 2R',
       plateNumber: data.plateNumber,
       vehicleType: data.vehicleType,
       entryTime: data.entryTime,
@@ -37,7 +37,7 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
   };
 
   const handlePrint = () => {
-    const name = businessName || 'ParkEasy';
+    const name = businessName || 'Parkir Mikrodata 2R';
     const canvas = qrCanvasRef.current?.querySelector('canvas');
     const qrDataUrl = canvas?.toDataURL('image/png') || '';
 
@@ -77,7 +77,7 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
           ${data.ownerName ? `<div class="row"><span>Pemilik:</span><span>${data.ownerName}</span></div>` : ''}
           <div class="line"></div>
           <p class="center small">Scan QR untuk proses keluar.</p>
-          <p class="center small">Powered by ParkEasy</p>
+          <p class="center small">Powered by Mikrodata 2R</p>
           <script>window.onload = function() { window.print(); window.close(); }<\/script>
         </body>
       </html>
@@ -92,7 +92,7 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
   return (
     <div className="bg-card rounded-xl border border-border p-4 space-y-2 font-mono text-xs">
       <div className="text-center space-y-1">
-        <p className="font-bold text-sm">{businessName || 'ParkEasy'}</p>
+        <p className="font-bold text-sm">{businessName || 'Parkir Mikrodata 2R'}</p>
         <div className="border-t border-dashed border-border my-2" />
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Tiket Masuk</p>
         <div className="border-t border-dashed border-border my-2" />
