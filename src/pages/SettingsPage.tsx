@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Save, Building2, DollarSign, Bell, Info, HelpCircle, ChevronDown } from 'lucide-react';
+import { Save, Building2, DollarSign, Bell, Info, HelpCircle } from 'lucide-react';
 import { getAppVersion } from '@/components/AppUpdateDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -144,7 +144,6 @@ const SettingsPage = () => {
     localStorage.setItem('parking_overtime_hours', String(overtimeHours));
     toast.success('Pengaturan notifikasi disimpan!');
 
-    // Request notification permission
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
@@ -163,17 +162,17 @@ const SettingsPage = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl font-bold">Pengaturan</h1>
+    <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
+      <h1 className="text-xl sm:text-2xl font-bold">Pengaturan</h1>
 
-      {/* Tab switcher - scrollable on small screens */}
+      {/* Tab switcher - responsive */}
       <div className="flex gap-1 bg-secondary/50 p-1 rounded-xl overflow-x-auto no-scrollbar">
         {tabs.map(tab => (
           <motion.button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             whileTap={{ scale: 0.95 }}
-            className={`flex-1 min-w-0 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors relative whitespace-nowrap ${
+            className={`flex-1 min-w-0 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-lg text-[11px] sm:text-sm font-semibold transition-colors relative whitespace-nowrap ${
               activeTab === tab.key ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -184,8 +183,8 @@ const SettingsPage = () => {
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
               />
             )}
-            <tab.icon className="w-4 h-4 relative z-10 shrink-0" />
-            <span className="relative z-10">{tab.label}</span>
+            <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10 shrink-0" />
+            <span className="relative z-10 truncate">{tab.label}</span>
           </motion.button>
         ))}
       </div>
@@ -198,33 +197,35 @@ const SettingsPage = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.2 }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            {rates.map((rate, i) => (
-              <motion.div
-                key={rate.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-card rounded-xl border border-border p-4 space-y-2"
-              >
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold capitalize">{rate.vehicle_type}</span>
-                  <span className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded-full capitalize">{rate.rate_type}</span>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Tarif (Rp)</Label>
-                  <Input
-                    type="number"
-                    value={rate.rate_amount}
-                    onChange={(e) => updateRate(rate.id, Number(e.target.value))}
-                    className="h-12 text-lg font-bold"
-                  />
-                </div>
-              </motion.div>
-            ))}
-            <Button onClick={handleSaveRates} className="w-full h-12 font-semibold" disabled={loading}>
-              <Save className="w-5 h-5 mr-2" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {rates.map((rate, i) => (
+                <motion.div
+                  key={rate.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="bg-card rounded-xl border border-border p-3 sm:p-4 space-y-2"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold capitalize text-sm sm:text-base">{rate.vehicle_type}</span>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground bg-secondary px-2 py-0.5 sm:py-1 rounded-full capitalize">{rate.rate_type}</span>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Tarif (Rp)</Label>
+                    <Input
+                      type="number"
+                      value={rate.rate_amount}
+                      onChange={(e) => updateRate(rate.id, Number(e.target.value))}
+                      className="h-10 sm:h-12 text-base sm:text-lg font-bold"
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <Button onClick={handleSaveRates} className="w-full h-11 sm:h-12 font-semibold" disabled={loading}>
+              <Save className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               {loading ? 'Menyimpan...' : 'Simpan Tarif'}
             </Button>
           </motion.div>
@@ -237,24 +238,26 @@ const SettingsPage = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <div className="bg-card rounded-xl border border-border p-4 space-y-4">
-              <div className="space-y-1">
-                <Label>Nama Usaha</Label>
-                <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="Contoh: Parkir Aman Sejahtera" />
-              </div>
-              <div className="space-y-1">
-                <Label>Alamat</Label>
-                <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Jl. Contoh No. 1" />
-              </div>
-              <div className="space-y-1">
-                <Label>Telepon</Label>
-                <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08xxxxxxxxxx" />
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="space-y-1 sm:col-span-2">
+                  <Label className="text-xs sm:text-sm">Nama Usaha</Label>
+                  <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="Contoh: Parkir Aman Sejahtera" className="h-10 sm:h-11" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs sm:text-sm">Alamat</Label>
+                  <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Jl. Contoh No. 1" className="h-10 sm:h-11" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs sm:text-sm">Telepon</Label>
+                  <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08xxxxxxxxxx" className="h-10 sm:h-11" />
+                </div>
               </div>
             </div>
-            <Button onClick={handleSaveBusiness} className="w-full h-12 font-semibold" disabled={businessLoading}>
-              <Save className="w-5 h-5 mr-2" />
+            <Button onClick={handleSaveBusiness} className="w-full h-11 sm:h-12 font-semibold" disabled={businessLoading}>
+              <Save className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               {businessLoading ? 'Menyimpan...' : 'Simpan Profil Usaha'}
             </Button>
           </motion.div>
@@ -267,35 +270,35 @@ const SettingsPage = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <div className="bg-card rounded-xl border border-border p-4 space-y-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Bell className="w-5 h-5 text-accent" />
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-3 sm:space-y-4">
+              <div className="flex items-start sm:items-center gap-3 mb-1">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+                  <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h3 className="font-semibold text-sm">Notifikasi Parkir Lama</h3>
-                  <p className="text-xs text-muted-foreground">Peringatan untuk kendaraan yang parkir melebihi batas waktu</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Peringatan untuk kendaraan yang parkir melebihi batas waktu</p>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <Label>Batas Waktu Parkir (Jam)</Label>
+                <Label className="text-xs sm:text-sm">Batas Waktu Parkir (Jam)</Label>
                 <Input
                   type="number"
                   min={1}
                   max={48}
                   value={overtimeHours}
                   onChange={(e) => setOvertimeHours(Number(e.target.value))}
-                  className="h-12 text-lg font-bold"
+                  className="h-10 sm:h-12 text-base sm:text-lg font-bold"
                 />
-                <p className="text-xs text-muted-foreground">Notifikasi akan muncul jika kendaraan parkir lebih dari {overtimeHours} jam</p>
+                <p className="text-[11px] sm:text-xs text-muted-foreground">Notifikasi akan muncul jika kendaraan parkir lebih dari {overtimeHours} jam</p>
               </div>
 
-              <div className="bg-secondary/50 rounded-lg p-3 space-y-1">
-                <p className="text-xs font-medium">Status Notifikasi Browser</p>
-                <p className="text-xs text-muted-foreground">
+              <div className="bg-secondary/50 rounded-lg p-2.5 sm:p-3 space-y-1">
+                <p className="text-[11px] sm:text-xs font-medium">Status Notifikasi Browser</p>
+                <p className="text-[11px] sm:text-xs text-muted-foreground">
                   {'Notification' in window
                     ? Notification.permission === 'granted'
                       ? '✅ Notifikasi browser diizinkan'
@@ -307,8 +310,8 @@ const SettingsPage = () => {
               </div>
             </div>
 
-            <Button onClick={handleSaveNotifications} className="w-full h-12 font-semibold">
-              <Save className="w-5 h-5 mr-2" />
+            <Button onClick={handleSaveNotifications} className="w-full h-11 sm:h-12 font-semibold">
+              <Save className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Simpan Pengaturan Notifikasi
             </Button>
           </motion.div>
@@ -321,24 +324,24 @@ const SettingsPage = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <div className="bg-card rounded-xl border border-border p-5 text-center space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-primary mx-auto flex items-center justify-center shadow-lg">
-                <span className="text-2xl text-primary-foreground font-bold">P</span>
+            <div className="bg-card rounded-xl border border-border p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary mx-auto flex items-center justify-center shadow-lg">
+                <span className="text-xl sm:text-2xl text-primary-foreground font-bold">P</span>
               </div>
               <div>
-                <h2 className="text-xl font-bold">ParkEasy</h2>
-                <p className="text-xs text-muted-foreground">Versi {localStorage.getItem('app_latest_version') || getAppVersion()}</p>
+                <h2 className="text-lg sm:text-xl font-bold">ParkEasy</h2>
+                <p className="text-[11px] sm:text-xs text-muted-foreground">Versi {localStorage.getItem('app_latest_version') || getAppVersion()}</p>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
                 Sistem manajemen parkir digital yang memudahkan pencatatan kendaraan masuk & keluar, penghitungan tarif otomatis, dan pelaporan pendapatan secara real-time.
               </p>
             </div>
 
-            <div className="bg-card rounded-xl border border-border p-4 space-y-3">
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-4 space-y-2 sm:space-y-3">
               <h3 className="font-semibold text-sm">Fitur Utama</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
                 {[
                   '📱 Scan QR Code & input manual plat nomor',
                   '💰 Perhitungan tarif otomatis (flat/per jam)',
@@ -347,17 +350,17 @@ const SettingsPage = () => {
                   '👥 Manajemen pengguna multi-role',
                   '🌙 Mode gelap & terang',
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2">
+                  <li key={i} className="flex items-start gap-1.5">
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="bg-card rounded-xl border border-border p-4 space-y-2">
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-4 space-y-1.5">
               <h3 className="font-semibold text-sm">Dibuat dengan ❤️</h3>
-              <p className="text-xs text-muted-foreground">Dibangun menggunakan React, Tailwind CSS, dan Lovable Cloud.</p>
-              <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} ParkEasy. All rights reserved.</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground">Dibangun menggunakan React, Tailwind CSS, dan Lovable Cloud.</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground">© {new Date().getFullYear()} ParkEasy. All rights reserved.</p>
             </div>
           </motion.div>
         )}
@@ -369,20 +372,20 @@ const SettingsPage = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <div className="bg-card rounded-xl border border-border p-4">
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5">
+              <h3 className="font-semibold text-sm sm:text-base mb-3 flex items-center gap-2">
                 <HelpCircle className="w-4 h-4 text-primary" />
                 Pertanyaan Umum (FAQ)
               </h3>
               <Accordion type="single" collapsible className="space-y-1">
                 {faqData.map((item, i) => (
                   <AccordionItem key={i} value={`faq-${i}`} className="border-b border-border/50 last:border-0">
-                    <AccordionTrigger className="text-sm font-medium text-left py-3 hover:no-underline">
+                    <AccordionTrigger className="text-xs sm:text-sm font-medium text-left py-2.5 sm:py-3 hover:no-underline">
                       {item.q}
                     </AccordionTrigger>
-                    <AccordionContent className="text-sm text-muted-foreground pb-3">
+                    <AccordionContent className="text-xs sm:text-sm text-muted-foreground pb-2.5 sm:pb-3">
                       {item.a}
                     </AccordionContent>
                   </AccordionItem>
