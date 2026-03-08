@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Save, Building2, DollarSign, Bell, Info, HelpCircle } from 'lucide-react';
+import { Save, Building2, DollarSign, Bell, Info, HelpCircle, Printer, Bluetooth, BluetoothOff, FileText } from 'lucide-react';
 import { getAppVersion } from '@/components/AppUpdateDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -17,7 +17,7 @@ interface Rate {
   rate_amount: number;
 }
 
-type Tab = 'rates' | 'business' | 'notifications' | 'about' | 'faq';
+type Tab = 'rates' | 'business' | 'printer' | 'notifications' | 'about' | 'faq';
 
 const faqData = [
   {
@@ -44,7 +44,86 @@ const faqData = [
     q: 'Bagaimana cara mengaktifkan notifikasi parkir terlalu lama?',
     a: 'Buka Pengaturan → Notifikasi, atur batas waktu parkir (jam), lalu izinkan notifikasi browser saat diminta.',
   },
+  {
+    q: 'Bagaimana cara menghubungkan printer Bluetooth?',
+    a: 'Buka Pengaturan → Printer, klik "Hubungkan Printer", lalu pilih perangkat Bluetooth printer dari daftar yang muncul. Pastikan printer sudah menyala dan mode Bluetooth aktif.',
+  },
 ];
+
+// Bluetooth Printer Helper
+const THERMAL_PRINTER_SERVICE = '000018f0-0000-1000-8000-00805f9b34fb';
+const THERMAL_PRINTER_CHAR = '00002af1-0000-1000-8000-00805f9b34fb';
+
+const ESC = 0x1B;
+const GS = 0x1D;
+const LF = 0x0A;
+
+function buildTestReceipt(): Uint8Array {
+  const encoder = new TextEncoder();
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+  const lines: number[] = [];
+
+  // Initialize printer
+  lines.push(ESC, 0x40); // ESC @ - Initialize
+  
+  // Center align
+  lines.push(ESC, 0x61, 0x01);
+  
+  // Bold on
+  lines.push(ESC, 0x45, 0x01);
+  
+  // Double size
+  lines.push(GS, 0x21, 0x11);
+  lines.push(...encoder.encode('ParkEasy'));
+  lines.push(LF);
+  
+  // Normal size
+  lines.push(GS, 0x21, 0x00);
+  lines.push(ESC, 0x45, 0x00); // Bold off
+  
+  lines.push(...encoder.encode('================================'));
+  lines.push(LF);
+  
+  lines.push(ESC, 0x45, 0x01);
+  lines.push(...encoder.encode('TES PRINT BERHASIL!'));
+  lines.push(LF);
+  lines.push(ESC, 0x45, 0x00);
+  
+  lines.push(...encoder.encode('================================'));
+  lines.push(LF);
+  
+  // Left align
+  lines.push(ESC, 0x61, 0x00);
+  
+  lines.push(...encoder.encode(`Tanggal : ${dateStr}`));
+  lines.push(LF);
+  lines.push(...encoder.encode(`Waktu   : ${timeStr}`));
+  lines.push(LF);
+  lines.push(...encoder.encode(`Status  : Terhubung`));
+  lines.push(LF);
+  
+  // Center align
+  lines.push(ESC, 0x61, 0x01);
+  lines.push(...encoder.encode('================================'));
+  lines.push(LF);
+  lines.push(...encoder.encode('Printer Bluetooth siap digunakan'));
+  lines.push(LF);
+  lines.push(...encoder.encode('untuk cetak tiket parkir.'));
+  lines.push(LF);
+  lines.push(...encoder.encode('================================'));
+  lines.push(LF);
+  lines.push(LF);
+  lines.push(LF);
+  lines.push(LF);
+
+  // Cut paper (partial)
+  lines.push(GS, 0x56, 0x01);
+
+  return new Uint8Array(lines);
+}
 
 const SettingsPage = () => {
   const { profile, user } = useAuth();
@@ -62,6 +141,93 @@ const SettingsPage = () => {
   const [overtimeHours, setOvertimeHours] = useState(() =>
     Number(localStorage.getItem('parking_overtime_hours')) || 3
   );
+
+  // Printer state
+  const [printerDevice, setPrinterDevice] = useState<any>(null);
+  const [printerName, setPrinterName] = useState<string>(() =>
+    localStorage.getItem('bt_printer_name') || ''
+  );
+  const [printerConnecting, setPrinterConnecting] = useState(false);
+  const [printerConnected, setPrinterConnected] = useState(false);
+  const [testPrinting, setTestPrinting] = useState(false);
+  const [characteristic, setCharacteristic] = useState<any>(null);
+
+  const isBtSupported = typeof navigator !== 'undefined' && 'bluetooth' in (navigator as any);
+
+  const handleConnectPrinter = useCallback(async () => {
+    if (!isBtSupported) {
+      toast.error('Browser tidak mendukung Bluetooth. Gunakan Chrome di Android atau desktop.');
+      return;
+    }
+    setPrinterConnecting(true);
+    try {
+      const bt = (navigator as any).bluetooth;
+      const device = await bt.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: [THERMAL_PRINTER_SERVICE],
+      });
+
+      if (!device.gatt) throw new Error('GATT tidak tersedia');
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService(THERMAL_PRINTER_SERVICE);
+      const char = await service.getCharacteristic(THERMAL_PRINTER_CHAR);
+
+      setPrinterDevice(device);
+      setPrinterName(device.name || 'Printer Bluetooth');
+      setCharacteristic(char);
+      setPrinterConnected(true);
+
+      localStorage.setItem('bt_printer_name', device.name || 'Printer Bluetooth');
+      toast.success(`Terhubung ke ${device.name || 'Printer'}`);
+
+      device.addEventListener('gattserverdisconnected', () => {
+        setPrinterConnected(false);
+        setCharacteristic(null);
+        toast.info('Printer terputus');
+      });
+    } catch (err: any) {
+      if (err.name !== 'NotFoundError') {
+        toast.error(err.message || 'Gagal menghubungkan printer');
+      }
+    } finally {
+      setPrinterConnecting(false);
+    }
+  }, [isBtSupported]);
+
+  const handleDisconnectPrinter = useCallback(() => {
+    if (printerDevice?.gatt?.connected) {
+      printerDevice.gatt.disconnect();
+    }
+    setPrinterDevice(null);
+    setPrinterConnected(false);
+    setCharacteristic(null);
+    setPrinterName('');
+    localStorage.removeItem('bt_printer_name');
+    toast.success('Printer diputuskan');
+  }, [printerDevice]);
+
+  const handleTestPrint = useCallback(async () => {
+    if (!characteristic) {
+      toast.error('Printer belum terhubung');
+      return;
+    }
+    setTestPrinting(true);
+    try {
+      const receipt = buildTestReceipt();
+      // Send in chunks of 100 bytes (BLE MTU limit)
+      const chunkSize = 100;
+      for (let i = 0; i < receipt.length; i += chunkSize) {
+        const chunk = receipt.slice(i, i + chunkSize);
+        await characteristic.writeValueWithoutResponse(chunk);
+      }
+      toast.success('Tes print berhasil dikirim!');
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal mengirim tes print');
+    } finally {
+      setTestPrinting(false);
+    }
+  }, [characteristic]);
 
   useEffect(() => {
     const fetchRates = async () => {
@@ -156,7 +322,8 @@ const SettingsPage = () => {
   const tabs: { key: Tab; label: string; icon: typeof DollarSign }[] = [
     { key: 'rates', label: 'Tarif', icon: DollarSign },
     { key: 'business', label: 'Usaha', icon: Building2 },
-    { key: 'notifications', label: 'Notifikasi', icon: Bell },
+    { key: 'printer', label: 'Printer', icon: Printer },
+    { key: 'notifications', label: 'Notif', icon: Bell },
     { key: 'about', label: 'Tentang', icon: Info },
     { key: 'faq', label: 'FAQ', icon: HelpCircle },
   ];
@@ -263,6 +430,115 @@ const SettingsPage = () => {
           </motion.div>
         )}
 
+        {activeTab === 'printer' && (
+          <motion.div
+            key="printer"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-3 sm:space-y-4"
+          >
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-4">
+              {/* Header */}
+              <div className="flex items-start sm:items-center gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Printer className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-sm">Printer Bluetooth</h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Hubungkan printer thermal Bluetooth untuk cetak tiket</p>
+                </div>
+              </div>
+
+              {/* Status */}
+              <div className="bg-secondary/50 rounded-lg p-3 sm:p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs sm:text-sm font-medium">Status Koneksi</span>
+                  <span className={`inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium px-2 py-1 rounded-full ${
+                    printerConnected
+                      ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+                      : 'bg-muted text-muted-foreground'
+                  }`}>
+                    {printerConnected ? (
+                      <><Bluetooth className="w-3 h-3" /> Terhubung</>
+                    ) : (
+                      <><BluetoothOff className="w-3 h-3" /> Tidak Terhubung</>
+                    )}
+                  </span>
+                </div>
+
+                {printerName && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] sm:text-xs text-muted-foreground">Perangkat</span>
+                    <span className="text-[11px] sm:text-xs font-medium">{printerName}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Browser support warning */}
+              {!isBtSupported && (
+                <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-xs sm:text-sm">
+                  ⚠️ Browser ini tidak mendukung Web Bluetooth. Gunakan <strong>Google Chrome</strong> di Android atau desktop untuk menghubungkan printer Bluetooth.
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                {!printerConnected ? (
+                  <Button
+                    onClick={handleConnectPrinter}
+                    disabled={printerConnecting || !isBtSupported}
+                    className="h-11 sm:h-12 font-semibold sm:col-span-2"
+                  >
+                    <Bluetooth className="w-4 h-4 mr-2" />
+                    {printerConnecting ? 'Menghubungkan...' : 'Hubungkan Printer'}
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      onClick={handleTestPrint}
+                      disabled={testPrinting}
+                      className="h-11 sm:h-12 font-semibold"
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      {testPrinting ? 'Mencetak...' : 'Tes Print'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleDisconnectPrinter}
+                      className="h-11 sm:h-12 font-semibold"
+                    >
+                      <BluetoothOff className="w-4 h-4 mr-2" />
+                      Putuskan
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Instructions */}
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-5 space-y-2">
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 text-primary" />
+                Cara Menghubungkan Printer
+              </h3>
+              <ol className="text-[11px] sm:text-xs text-muted-foreground space-y-1.5 list-decimal list-inside">
+                <li>Nyalakan printer Bluetooth thermal Anda</li>
+                <li>Pastikan Bluetooth pada perangkat Anda aktif</li>
+                <li>Klik tombol <strong>"Hubungkan Printer"</strong> di atas</li>
+                <li>Pilih printer dari daftar perangkat yang muncul</li>
+                <li>Setelah terhubung, klik <strong>"Tes Print"</strong> untuk mencoba cetak</li>
+              </ol>
+              <div className="bg-secondary/50 rounded-lg p-2.5 mt-2">
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+                  💡 <strong>Tips:</strong> Printer thermal 58mm & 80mm umumnya didukung. Pastikan menggunakan browser Chrome untuk kompatibilitas terbaik.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {activeTab === 'notifications' && (
           <motion.div
             key="notifications"
@@ -348,6 +624,7 @@ const SettingsPage = () => {
                   '📊 Dashboard & laporan pendapatan real-time',
                   '🔔 Notifikasi kendaraan parkir terlalu lama',
                   '👥 Manajemen pengguna multi-role',
+                  '🖨️ Cetak tiket via printer Bluetooth',
                   '🌙 Mode gelap & terang',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-1.5">
