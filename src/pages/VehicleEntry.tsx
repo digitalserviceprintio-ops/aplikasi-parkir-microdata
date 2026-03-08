@@ -46,9 +46,11 @@ const VehicleEntry = () => {
       setCardId(data.id);
       if (data.plate_number) setPlateNumber(data.plate_number);
       setVehicleType(data.vehicle_type);
+      setOwnerName(data.owner_name || null);
       toast.success(`Kartu ditemukan: ${data.owner_name || code}`);
     } else {
       setCardId(null);
+      setOwnerName(null);
       toast.info('Kartu tidak ditemukan, isi manual');
     }
   };
