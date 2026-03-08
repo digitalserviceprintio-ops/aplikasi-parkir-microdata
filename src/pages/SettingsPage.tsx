@@ -787,7 +787,7 @@ const SettingsPage = () => {
               </div>
             </div>
           </motion.div>
-        )
+        )}
 
         {activeTab === 'faq' && (
           <motion.div
