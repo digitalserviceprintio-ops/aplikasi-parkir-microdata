@@ -477,7 +477,7 @@ const SettingsPage = () => {
                 <span className="text-xl sm:text-2xl text-primary-foreground font-bold">P</span>
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-bold">ParkEasy</h2>
+                <h2 className="text-lg sm:text-xl font-bold">Parkir Mikrodata 2R</h2>
                 <p className="text-[11px] sm:text-xs text-muted-foreground">Versi {localStorage.getItem('app_latest_version') || getAppVersion()}</p>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
