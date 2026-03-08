@@ -190,6 +190,7 @@ const SettingsPage = () => {
     { key: 'business', label: 'Usaha', icon: Building2 },
     { key: 'printer', label: 'Printer', icon: Printer },
     { key: 'notifications', label: 'Notif', icon: Bell },
+    { key: 'install', label: 'Install', icon: Download },
     { key: 'about', label: 'Tentang', icon: Info },
     { key: 'faq', label: 'FAQ', icon: HelpCircle },
   ];
