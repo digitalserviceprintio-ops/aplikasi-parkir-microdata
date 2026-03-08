@@ -77,7 +77,7 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
           ${data.ownerName ? `<div class="row"><span>Pemilik:</span><span>${data.ownerName}</span></div>` : ''}
           <div class="line"></div>
           <p class="center small">Scan QR untuk proses keluar.</p>
-          <p class="center small">Powered by ParkEasy</p>
+          <p class="center small">Powered by Mikrodata 2R</p>
           <script>window.onload = function() { window.print(); window.close(); }<\/script>
         </body>
       </html>
