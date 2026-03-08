@@ -329,7 +329,7 @@ const SettingsPage = () => {
               </div>
               <div>
                 <h2 className="text-xl font-bold">ParkEasy</h2>
-                <p className="text-xs text-muted-foreground">Versi 1.0.0</p>
+                <p className="text-xs text-muted-foreground">Versi {localStorage.getItem('app_latest_version') || getAppVersion()}</p>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Sistem manajemen parkir digital yang memudahkan pencatatan kendaraan masuk & keluar, penghitungan tarif otomatis, dan pelaporan pendapatan secara real-time.
