@@ -65,7 +65,7 @@ const SettingsPage = () => {
   const { profile, user } = useAuth();
   const [rates, setRates] = useState<Rate[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<Tab>('rates');
+  const [activeTab, setActiveTab] = useState<Tab>('menu');
 
   // Business profile state
   const [businessName, setBusinessName] = useState('');
