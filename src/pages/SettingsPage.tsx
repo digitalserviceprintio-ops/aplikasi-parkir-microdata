@@ -188,11 +188,99 @@ const SettingsPage = () => {
     return <p className="text-center text-muted-foreground py-8">Akses hanya untuk admin</p>;
   }
 
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+
+  const handleBackupData = async () => {
+    setBackupLoading(true);
+    try {
+      const tables = ['transactions', 'parking_cards', 'parking_rates', 'profiles', 'business_profiles'];
+      const backup: Record<string, any[]> = {};
+
+      for (const table of tables) {
+        const { data, error } = await supabase.from(table).select('*');
+        if (error) throw new Error(`Gagal backup tabel ${table}: ${error.message}`);
+        backup[table] = data || [];
+      }
+
+      const backupData = {
+        app: 'Parkir Mikrodata 2R',
+        version: getAppVersion(),
+        exported_at: new Date().toISOString(),
+        tables: backup,
+      };
+
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup-mikrodata-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success('Backup data berhasil diunduh!');
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal backup data');
+    } finally {
+      setBackupLoading(false);
+    }
+  };
+
+  const handleImportData = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportLoading(true);
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+
+      if (!data.app || !data.tables) {
+        throw new Error('Format file backup tidak valid');
+      }
+
+      // Import parking_rates
+      if (data.tables.parking_rates?.length) {
+        for (const rate of data.tables.parking_rates) {
+          await supabase
+            .from('parking_rates')
+            .upsert({ id: rate.id, vehicle_type: rate.vehicle_type, rate_type: rate.rate_type, rate_amount: rate.rate_amount }, { onConflict: 'id' });
+        }
+      }
+
+      // Import parking_cards
+      if (data.tables.parking_cards?.length) {
+        for (const card of data.tables.parking_cards) {
+          await supabase
+            .from('parking_cards')
+            .upsert(card, { onConflict: 'id' });
+        }
+      }
+
+      // Import transactions
+      if (data.tables.transactions?.length) {
+        for (const tx of data.tables.transactions) {
+          await supabase
+            .from('transactions')
+            .upsert(tx, { onConflict: 'id' });
+        }
+      }
+
+      toast.success(`Data berhasil diimpor! (${data.tables.transactions?.length || 0} transaksi, ${data.tables.parking_cards?.length || 0} kartu)`);
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal mengimpor data');
+    } finally {
+      setImportLoading(false);
+      e.target.value = '';
+    }
+  };
+
   const tabs: { key: Tab; label: string; icon: typeof DollarSign }[] = [
     { key: 'rates', label: 'Tarif', icon: DollarSign },
     { key: 'business', label: 'Usaha', icon: Building2 },
     { key: 'printer', label: 'Printer', icon: Printer },
     { key: 'notifications', label: 'Notif', icon: Bell },
+    { key: 'backup', label: 'Backup', icon: DatabaseBackup },
     { key: 'install', label: 'Install', icon: Download },
     { key: 'about', label: 'Tentang', icon: Info },
     { key: 'faq', label: 'FAQ', icon: HelpCircle },
