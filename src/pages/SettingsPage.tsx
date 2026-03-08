@@ -595,7 +595,7 @@ const SettingsPage = () => {
               </div>
               <ol className="text-[11px] sm:text-xs text-muted-foreground space-y-2 list-decimal list-inside">
                 <li>Buka browser <strong>Google Chrome</strong> di HP atau komputer</li>
-                <li>Kunjungi alamat: <strong className="text-foreground select-all">parkir-aman.lovable.app</strong></li>
+                <li>Kunjungi alamat: <strong className="text-foreground select-all">https://aplikasi-parkir-microdata.vercel.app</strong></li>
                 <li>Login dengan akun Anda</li>
                 <li className="font-medium text-foreground">Opsional — tambah ke layar utama:</li>
               </ol>
