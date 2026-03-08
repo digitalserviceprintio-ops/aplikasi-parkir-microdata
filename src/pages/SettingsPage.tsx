@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Save, Building2, DollarSign, Bell, Info, HelpCircle, Printer, Bluetooth
 import { getAppVersion } from '@/components/AppUpdateDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useBluetoothPrinter, buildEntryTicket } from '@/hooks/useBluetoothPrinter';
 
 interface Rate {
   id: string;
@@ -50,79 +51,14 @@ const faqData = [
   },
 ];
 
-// Bluetooth Printer Helper
-const THERMAL_PRINTER_SERVICE = '000018f0-0000-1000-8000-00805f9b34fb';
-const THERMAL_PRINTER_CHAR = '00002af1-0000-1000-8000-00805f9b34fb';
-
-const ESC = 0x1B;
-const GS = 0x1D;
-const LF = 0x0A;
-
+// Test receipt builder using shared hook's format
 function buildTestReceipt(): Uint8Array {
-  const encoder = new TextEncoder();
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-
-  const lines: number[] = [];
-
-  // Initialize printer
-  lines.push(ESC, 0x40); // ESC @ - Initialize
-  
-  // Center align
-  lines.push(ESC, 0x61, 0x01);
-  
-  // Bold on
-  lines.push(ESC, 0x45, 0x01);
-  
-  // Double size
-  lines.push(GS, 0x21, 0x11);
-  lines.push(...encoder.encode('ParkEasy'));
-  lines.push(LF);
-  
-  // Normal size
-  lines.push(GS, 0x21, 0x00);
-  lines.push(ESC, 0x45, 0x00); // Bold off
-  
-  lines.push(...encoder.encode('================================'));
-  lines.push(LF);
-  
-  lines.push(ESC, 0x45, 0x01);
-  lines.push(...encoder.encode('TES PRINT BERHASIL!'));
-  lines.push(LF);
-  lines.push(ESC, 0x45, 0x00);
-  
-  lines.push(...encoder.encode('================================'));
-  lines.push(LF);
-  
-  // Left align
-  lines.push(ESC, 0x61, 0x00);
-  
-  lines.push(...encoder.encode(`Tanggal : ${dateStr}`));
-  lines.push(LF);
-  lines.push(...encoder.encode(`Waktu   : ${timeStr}`));
-  lines.push(LF);
-  lines.push(...encoder.encode(`Status  : Terhubung`));
-  lines.push(LF);
-  
-  // Center align
-  lines.push(ESC, 0x61, 0x01);
-  lines.push(...encoder.encode('================================'));
-  lines.push(LF);
-  lines.push(...encoder.encode('Printer Bluetooth siap digunakan'));
-  lines.push(LF);
-  lines.push(...encoder.encode('untuk cetak tiket parkir.'));
-  lines.push(LF);
-  lines.push(...encoder.encode('================================'));
-  lines.push(LF);
-  lines.push(LF);
-  lines.push(LF);
-  lines.push(LF);
-
-  // Cut paper (partial)
-  lines.push(GS, 0x56, 0x01);
-
-  return new Uint8Array(lines);
+  return buildEntryTicket({
+    businessName: 'ParkEasy',
+    plateNumber: 'TES-1234',
+    vehicleType: 'motor',
+    entryTime: new Date().toISOString(),
+  });
 }
 
 const SettingsPage = () => {
@@ -142,92 +78,22 @@ const SettingsPage = () => {
     Number(localStorage.getItem('parking_overtime_hours')) || 3
   );
 
-  // Printer state
-  const [printerDevice, setPrinterDevice] = useState<any>(null);
-  const [printerName, setPrinterName] = useState<string>(() =>
-    localStorage.getItem('bt_printer_name') || ''
-  );
-  const [printerConnecting, setPrinterConnecting] = useState(false);
-  const [printerConnected, setPrinterConnected] = useState(false);
-  const [testPrinting, setTestPrinting] = useState(false);
-  const [characteristic, setCharacteristic] = useState<any>(null);
+  // Printer (shared hook)
+  const {
+    isSupported: isBtSupported,
+    connected: printerConnected,
+    connecting: printerConnecting,
+    printing: testPrinting,
+    printerName,
+    connect: handleConnectPrinter,
+    disconnect: handleDisconnectPrinter,
+    printData,
+  } = useBluetoothPrinter();
 
-  const isBtSupported = typeof navigator !== 'undefined' && 'bluetooth' in (navigator as any);
-
-  const handleConnectPrinter = useCallback(async () => {
-    if (!isBtSupported) {
-      toast.error('Browser tidak mendukung Bluetooth. Gunakan Chrome di Android atau desktop.');
-      return;
-    }
-    setPrinterConnecting(true);
-    try {
-      const bt = (navigator as any).bluetooth;
-      const device = await bt.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: [THERMAL_PRINTER_SERVICE],
-      });
-
-      if (!device.gatt) throw new Error('GATT tidak tersedia');
-
-      const server = await device.gatt.connect();
-      const service = await server.getPrimaryService(THERMAL_PRINTER_SERVICE);
-      const char = await service.getCharacteristic(THERMAL_PRINTER_CHAR);
-
-      setPrinterDevice(device);
-      setPrinterName(device.name || 'Printer Bluetooth');
-      setCharacteristic(char);
-      setPrinterConnected(true);
-
-      localStorage.setItem('bt_printer_name', device.name || 'Printer Bluetooth');
-      toast.success(`Terhubung ke ${device.name || 'Printer'}`);
-
-      device.addEventListener('gattserverdisconnected', () => {
-        setPrinterConnected(false);
-        setCharacteristic(null);
-        toast.info('Printer terputus');
-      });
-    } catch (err: any) {
-      if (err.name !== 'NotFoundError') {
-        toast.error(err.message || 'Gagal menghubungkan printer');
-      }
-    } finally {
-      setPrinterConnecting(false);
-    }
-  }, [isBtSupported]);
-
-  const handleDisconnectPrinter = useCallback(() => {
-    if (printerDevice?.gatt?.connected) {
-      printerDevice.gatt.disconnect();
-    }
-    setPrinterDevice(null);
-    setPrinterConnected(false);
-    setCharacteristic(null);
-    setPrinterName('');
-    localStorage.removeItem('bt_printer_name');
-    toast.success('Printer diputuskan');
-  }, [printerDevice]);
-
-  const handleTestPrint = useCallback(async () => {
-    if (!characteristic) {
-      toast.error('Printer belum terhubung');
-      return;
-    }
-    setTestPrinting(true);
-    try {
-      const receipt = buildTestReceipt();
-      // Send in chunks of 100 bytes (BLE MTU limit)
-      const chunkSize = 100;
-      for (let i = 0; i < receipt.length; i += chunkSize) {
-        const chunk = receipt.slice(i, i + chunkSize);
-        await characteristic.writeValueWithoutResponse(chunk);
-      }
-      toast.success('Tes print berhasil dikirim!');
-    } catch (err: any) {
-      toast.error(err.message || 'Gagal mengirim tes print');
-    } finally {
-      setTestPrinting(false);
-    }
-  }, [characteristic]);
+  const handleTestPrint = async () => {
+    const receipt = buildTestReceipt();
+    await printData(receipt);
+  };
 
   useEffect(() => {
     const fetchRates = async () => {

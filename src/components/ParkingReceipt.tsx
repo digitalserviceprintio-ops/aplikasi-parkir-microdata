@@ -1,6 +1,6 @@
-import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Printer } from 'lucide-react';
+import { Printer, Bluetooth } from 'lucide-react';
+import { useBluetoothPrinter, buildExitReceipt } from '@/hooks/useBluetoothPrinter';
 
 interface ReceiptData {
   plateNumber: string;
@@ -24,6 +24,24 @@ const formatDateTime = (iso: string) =>
   });
 
 const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessName?: string }) => {
+  const { connected, connecting, printing, printerName, connect, printData } = useBluetoothPrinter();
+
+  const handleBtPrint = async () => {
+    const receipt = buildExitReceipt({
+      businessName: businessName || 'ParkEasy',
+      plateNumber: data.plateNumber,
+      vehicleType: data.vehicleType,
+      entryTime: data.entryTime,
+      exitTime: data.exitTime,
+      duration: data.duration,
+      totalPrice: data.totalPrice,
+      paymentMethod: data.paymentMethod,
+      cardCode: data.cardCode,
+      ownerName: data.ownerName,
+    });
+    await printData(receipt);
+  };
+
   const handlePrint = () => {
     const name = businessName || 'ParkEasy';
     const html = `
@@ -91,10 +109,24 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
         <div className="flex justify-between"><span className="text-muted-foreground">Metode</span><span className="uppercase">{data.paymentMethod}</span></div>
         <div className="flex justify-between font-bold text-sm"><span>TOTAL</span><span className="text-primary">{formatCurrency(data.totalPrice)}</span></div>
       </div>
-      <Button onClick={handlePrint} className="w-full h-11 mt-3 font-semibold" variant="outline">
-        <Printer className="w-4 h-4 mr-2" />
-        Cetak Struk
-      </Button>
+
+      <div className="grid grid-cols-2 gap-2 mt-3">
+        <Button onClick={handlePrint} className="h-11 font-semibold" variant="outline">
+          <Printer className="w-4 h-4 mr-2" />
+          Cetak
+        </Button>
+        {connected ? (
+          <Button onClick={handleBtPrint} className="h-11 font-semibold" disabled={printing}>
+            <Bluetooth className="w-4 h-4 mr-2" />
+            {printing ? 'Mencetak...' : 'BT Print'}
+          </Button>
+        ) : (
+          <Button onClick={connect} className="h-11 font-semibold" variant="secondary" disabled={connecting}>
+            <Bluetooth className="w-4 h-4 mr-2" />
+            {connecting ? 'Hubungkan...' : printerName ? `Sambung ${printerName}` : 'BT Printer'}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
