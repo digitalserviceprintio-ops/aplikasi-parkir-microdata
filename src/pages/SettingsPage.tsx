@@ -81,6 +81,8 @@ const SettingsPage = () => {
   // APK download URL
   const [apkUrl, setApkUrl] = useState(() => localStorage.getItem('apk_download_url') || '');
   const [apkUrlEditing, setApkUrlEditing] = useState(false);
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
 
   const {
     isSupported: isBtSupported,
