@@ -198,7 +198,7 @@ const SettingsPage = () => {
       const backup: Record<string, any[]> = {};
 
       for (const table of tables) {
-        const { data, error } = await supabase.from(table).select('*');
+        const { data, error } = await supabase.from(table as any).select('*');
         if (error) throw new Error(`Gagal backup tabel ${table}: ${error.message}`);
         backup[table] = data || [];
       }
