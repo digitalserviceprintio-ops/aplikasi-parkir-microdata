@@ -474,7 +474,7 @@ const SettingsPage = () => {
           >
             <div className="bg-card rounded-xl border border-border p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary mx-auto flex items-center justify-center shadow-lg">
-                <span className="text-xl sm:text-2xl text-primary-foreground font-bold">P</span>
+                <span className="text-xl sm:text-2xl text-primary-foreground font-bold">M</span>
               </div>
               <div>
                 <h2 className="text-lg sm:text-xl font-bold">Parkir Mikrodata 2R</h2>
