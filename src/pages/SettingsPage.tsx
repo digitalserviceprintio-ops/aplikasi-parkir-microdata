@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Save, Building2, DollarSign, Bell, Info, HelpCircle, ChevronDown } from 'lucide-react';
+import { getAppVersion } from '@/components/AppUpdateDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
