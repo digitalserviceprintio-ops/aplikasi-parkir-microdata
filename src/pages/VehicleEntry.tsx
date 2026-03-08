@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Car, Bike, HelpCircle, LogIn } from 'lucide-react';
 import QrScanner from '@/components/QrScanner';
+import EntryReceipt from '@/components/EntryReceipt';
 
 const vehicleTypes = [
   { value: 'motor', label: 'Motor', icon: Bike },
