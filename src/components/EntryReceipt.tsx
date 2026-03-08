@@ -92,7 +92,7 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
   return (
     <div className="bg-card rounded-xl border border-border p-4 space-y-2 font-mono text-xs">
       <div className="text-center space-y-1">
-        <p className="font-bold text-sm">{businessName || 'ParkEasy'}</p>
+        <p className="font-bold text-sm">{businessName || 'Parkir Mikrodata 2R'}</p>
         <div className="border-t border-dashed border-border my-2" />
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Tiket Masuk</p>
         <div className="border-t border-dashed border-border my-2" />

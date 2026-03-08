@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
       },
       manifest: {
-        name: "ParkEasy - Sistem Parkir Digital",
-        short_name: "ParkEasy",
+        name: "Parkir Mikrodata 2R - Sistem Parkir Digital",
+        short_name: "Mikrodata 2R",
         description: "Aplikasi manajemen parkir digital",
         theme_color: "#0f766e",
         background_color: "#f5f7fa",

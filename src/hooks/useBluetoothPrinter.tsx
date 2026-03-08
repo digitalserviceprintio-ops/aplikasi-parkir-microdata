@@ -133,7 +133,7 @@ export function buildExitReceipt(opts: {
     ...esc(ESC, 0x61, 0x01),
     ...line('================================'),
     ...line('Terima kasih telah parkir!'),
-    ...line('Powered by ParkEasy'),
+    ...line('Powered by Mikrodata 2R'),
     LF, LF, LF,
     ...esc(GS, 0x56, 0x01),
   ];
