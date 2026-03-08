@@ -321,7 +321,7 @@ const SettingsPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-4 gap-2 sm:gap-3"
+            className="grid grid-cols-5 sm:grid-cols-4 lg:grid-cols-4 gap-1.5 sm:gap-3"
           >
             {tabs.map((tab, i) => (
               <motion.button
