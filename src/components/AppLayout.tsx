@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Car, LayoutDashboard, LogIn as LogInIcon, LogOut as LogOutIcon, FileText, Settings, Users, CreditCard, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageTransition from '@/components/PageTransition';
+import AppUpdateDialog from '@/components/AppUpdateDialog';
 import { motion } from 'framer-motion';
 import bgSplash from '@/assets/bg-splash.jpg';
 

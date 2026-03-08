@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { LogOut, Search, Clock, DollarSign } from 'lucide-react';
+import { LogOut, Search, Clock, DollarSign, Printer } from 'lucide-react';
 import QrScanner from '@/components/QrScanner';
+import ParkingReceipt from '@/components/ParkingReceipt';
 
 interface ActiveVehicle {
   id: string;
@@ -19,11 +21,22 @@ interface ActiveVehicle {
 }
 
 const VehicleExit = () => {
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [vehicle, setVehicle] = useState<ActiveVehicle | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'qris'>('cash');
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
+  const [businessName, setBusinessName] = useState('');
+
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      const { data } = await supabase.from('business_profiles').select('business_name').limit(1).maybeSingle();
+      if (data) setBusinessName(data.business_name);
+    };
+    fetchBusiness();
+  }, []);
 
   const calculateDuration = (entryTime: string) => {
     const entry = new Date(entryTime);
@@ -42,7 +55,6 @@ const VehicleExit = () => {
       .single();
 
     if (!rates) return 0;
-
     if (rates.rate_type === 'flat') return rates.rate_amount;
 
     const entry = new Date(entryTime);
@@ -53,6 +65,7 @@ const VehicleExit = () => {
 
   const findAndSetVehicle = async (query: { plate_number?: string; card_id?: string }) => {
     setSearching(true);
+    setReceiptData(null);
     try {
       let q = supabase
         .from('transactions')
@@ -61,12 +74,8 @@ const VehicleExit = () => {
         .order('entry_time', { ascending: false })
         .limit(1);
 
-      if (query.plate_number) {
-        q = q.eq('plate_number', query.plate_number);
-      }
-      if (query.card_id) {
-        q = q.eq('card_id', query.card_id);
-      }
+      if (query.plate_number) q = q.eq('plate_number', query.plate_number);
+      if (query.card_id) q = q.eq('card_id', query.card_id);
 
       const { data, error } = await q.single();
 
@@ -102,7 +111,6 @@ const VehicleExit = () => {
   };
 
   const handleQrScan = async (code: string) => {
-    // Find card by code, then find active transaction by card_id
     const { data: card } = await supabase
       .from('parking_cards')
       .select('id')
@@ -112,7 +120,6 @@ const VehicleExit = () => {
     if (card) {
       await findAndSetVehicle({ card_id: card.id });
     } else {
-      // Fallback: treat scanned code as plate number
       await findAndSetVehicle({ plate_number: code.toUpperCase().trim() });
     }
   };
@@ -121,10 +128,11 @@ const VehicleExit = () => {
     if (!vehicle) return;
     setLoading(true);
     try {
+      const exitTime = new Date().toISOString();
       const { error } = await supabase
         .from('transactions')
         .update({
-          exit_time: new Date().toISOString(),
+          exit_time: exitTime,
           total_price: vehicle.totalPrice,
           payment_method: paymentMethod,
           payment_status: 'paid',
@@ -132,6 +140,19 @@ const VehicleExit = () => {
         .eq('id', vehicle.id);
 
       if (error) throw error;
+
+      // Show receipt
+      setReceiptData({
+        plateNumber: vehicle.plate_number,
+        vehicleType: vehicle.vehicle_type,
+        entryTime: vehicle.entry_time,
+        exitTime,
+        duration: vehicle.duration,
+        totalPrice: vehicle.totalPrice,
+        paymentMethod,
+        cardCode: vehicle.card_code,
+        ownerName: vehicle.owner_name,
+      });
 
       toast.success(`${vehicle.plate_number} berhasil keluar!`);
       setVehicle(null);
@@ -173,12 +194,8 @@ const VehicleExit = () => {
           <div className="bg-primary/10 p-4 text-center">
             <p className="text-2xl font-black tracking-widest text-primary">{vehicle.plate_number}</p>
             <p className="text-sm text-muted-foreground capitalize mt-1">{vehicle.vehicle_type}</p>
-            {vehicle.owner_name && (
-              <p className="text-xs text-muted-foreground mt-1">Pemilik: {vehicle.owner_name}</p>
-            )}
-            {vehicle.card_code && (
-              <p className="text-xs text-muted-foreground">Kartu: {vehicle.card_code}</p>
-            )}
+            {vehicle.owner_name && <p className="text-xs text-muted-foreground mt-1">Pemilik: {vehicle.owner_name}</p>}
+            {vehicle.card_code && <p className="text-xs text-muted-foreground">Kartu: {vehicle.card_code}</p>}
           </div>
 
           <div className="p-4 space-y-3">
@@ -221,6 +238,17 @@ const VehicleExit = () => {
               {loading ? 'Memproses...' : 'Proses Keluar'}
             </Button>
           </div>
+        </div>
+      )}
+
+      {/* Receipt after checkout */}
+      {receiptData && (
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-muted-foreground">Struk Parkir</h2>
+          <ParkingReceipt data={receiptData} businessName={businessName} />
+          <Button variant="ghost" className="w-full text-sm" onClick={() => setReceiptData(null)}>
+            Tutup Struk
+          </Button>
         </div>
       )}
     </div>

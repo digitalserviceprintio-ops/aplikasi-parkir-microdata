@@ -24,16 +24,9 @@ const formatDateTime = (iso: string) =>
   });
 
 const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessName?: string }) => {
-  const receiptRef = useRef<HTMLDivElement>(null);
-
   const handlePrint = () => {
-    const content = receiptRef.current;
-    if (!content) return;
-
-    const printWindow = window.open('', '_blank', 'width=320,height=600');
-    if (!printWindow) return;
-
-    printWindow.document.write(`
+    const name = businessName || 'ParkEasy';
+    const html = `
       <html>
         <head>
           <title>Struk Parkir</title>
@@ -50,62 +43,58 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
           </style>
         </head>
         <body>
-          ${content.innerHTML}
+          <div class="center">
+            <h2>${name}</h2>
+            <p class="small">Sistem Parkir Digital</p>
+          </div>
+          <div class="line"></div>
+          <div class="center big bold">${data.plateNumber}</div>
+          <p class="center small" style="text-transform:capitalize">${data.vehicleType}</p>
+          <div class="line"></div>
+          <div class="row"><span>Masuk:</span><span>${formatDateTime(data.entryTime)}</span></div>
+          <div class="row"><span>Keluar:</span><span>${formatDateTime(data.exitTime)}</span></div>
+          <div class="row"><span>Durasi:</span><span>${data.duration}</span></div>
+          ${data.cardCode ? `<div class="row"><span>Kartu:</span><span>${data.cardCode}</span></div>` : ''}
+          ${data.ownerName ? `<div class="row"><span>Pemilik:</span><span>${data.ownerName}</span></div>` : ''}
+          <div class="line"></div>
+          <div class="row"><span>Metode:</span><span style="text-transform:uppercase">${data.paymentMethod}</span></div>
+          <div class="row bold"><span>TOTAL:</span><span>${formatCurrency(data.totalPrice)}</span></div>
+          <div class="line"></div>
+          <p class="center small">Terima kasih telah parkir di sini!</p>
+          <p class="center small">Powered by ParkEasy</p>
           <script>window.onload = function() { window.print(); window.close(); }<\/script>
         </body>
       </html>
-    `);
+    `;
+
+    const printWindow = window.open('', '_blank', 'width=320,height=600');
+    if (!printWindow) return;
+    printWindow.document.write(html);
     printWindow.document.close();
   };
 
   return (
-    <div>
-      {/* Hidden receipt template */}
-      <div ref={receiptRef} style={{ display: 'none' }}>
-        <div class="center">
-          <h2>${businessName || 'ParkEasy'}</h2>
-          <p class="small">Sistem Parkir Digital</p>
-        </div>
-        <div class="line"></div>
-        <div class="center big bold">{data.plateNumber}</div>
-        <p class="center small" style={{ textTransform: 'capitalize' }}>{data.vehicleType}</p>
-        <div class="line"></div>
-        <div class="row"><span>Masuk:</span><span>{formatDateTime(data.entryTime)}</span></div>
-        <div class="row"><span>Keluar:</span><span>{formatDateTime(data.exitTime)}</span></div>
-        <div class="row"><span>Durasi:</span><span>{data.duration}</span></div>
-        {data.cardCode && <div class="row"><span>Kartu:</span><span>{data.cardCode}</span></div>}
-        {data.ownerName && <div class="row"><span>Pemilik:</span><span>{data.ownerName}</span></div>}
-        <div class="line"></div>
-        <div class="row"><span>Metode:</span><span style={{ textTransform: 'uppercase' }}>{data.paymentMethod}</span></div>
-        <div class="row bold"><span>TOTAL:</span><span>{formatCurrency(data.totalPrice)}</span></div>
-        <div class="line"></div>
-        <p class="center small">Terima kasih telah parkir di sini!</p>
-        <p class="center small">Powered by ParkEasy</p>
+    <div className="bg-card rounded-xl border border-border p-4 space-y-2 font-mono text-xs">
+      <div className="text-center space-y-1">
+        <p className="font-bold text-sm">{businessName || 'ParkEasy'}</p>
+        <div className="border-t border-dashed border-border my-2" />
+        <p className="text-lg font-black tracking-widest text-primary">{data.plateNumber}</p>
+        <p className="text-muted-foreground capitalize">{data.vehicleType}</p>
+        <div className="border-t border-dashed border-border my-2" />
       </div>
-
-      {/* Visible receipt preview + print button */}
-      <div className="bg-card rounded-xl border border-border p-4 space-y-2 font-mono text-xs">
-        <div className="text-center space-y-1">
-          <p className="font-bold text-sm">{businessName || 'ParkEasy'}</p>
-          <div className="border-t border-dashed border-border my-2" />
-          <p className="text-lg font-black tracking-widest text-primary">{data.plateNumber}</p>
-          <p className="text-muted-foreground capitalize">{data.vehicleType}</p>
-          <div className="border-t border-dashed border-border my-2" />
-        </div>
-        <div className="space-y-1">
-          <div className="flex justify-between"><span className="text-muted-foreground">Masuk</span><span>{formatDateTime(data.entryTime)}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Keluar</span><span>{formatDateTime(data.exitTime)}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Durasi</span><span>{data.duration}</span></div>
-          {data.cardCode && <div className="flex justify-between"><span className="text-muted-foreground">Kartu</span><span>{data.cardCode}</span></div>}
-          <div className="border-t border-dashed border-border my-2" />
-          <div className="flex justify-between"><span className="text-muted-foreground">Metode</span><span className="uppercase">{data.paymentMethod}</span></div>
-          <div className="flex justify-between font-bold text-sm"><span>TOTAL</span><span className="text-primary">{formatCurrency(data.totalPrice)}</span></div>
-        </div>
-        <Button onClick={handlePrint} className="w-full h-11 mt-3 font-semibold" variant="outline">
-          <Printer className="w-4 h-4 mr-2" />
-          Cetak Struk
-        </Button>
+      <div className="space-y-1">
+        <div className="flex justify-between"><span className="text-muted-foreground">Masuk</span><span>{formatDateTime(data.entryTime)}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Keluar</span><span>{formatDateTime(data.exitTime)}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Durasi</span><span>{data.duration}</span></div>
+        {data.cardCode && <div className="flex justify-between"><span className="text-muted-foreground">Kartu</span><span>{data.cardCode}</span></div>}
+        <div className="border-t border-dashed border-border my-2" />
+        <div className="flex justify-between"><span className="text-muted-foreground">Metode</span><span className="uppercase">{data.paymentMethod}</span></div>
+        <div className="flex justify-between font-bold text-sm"><span>TOTAL</span><span className="text-primary">{formatCurrency(data.totalPrice)}</span></div>
       </div>
+      <Button onClick={handlePrint} className="w-full h-11 mt-3 font-semibold" variant="outline">
+        <Printer className="w-4 h-4 mr-2" />
+        Cetak Struk
+      </Button>
     </div>
   );
 };
