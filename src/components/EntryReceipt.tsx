@@ -26,7 +26,7 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
 
   const handleBtPrint = async () => {
     const ticket = buildEntryTicket({
-      businessName: businessName || 'ParkEasy',
+      businessName: businessName || 'Parkir Mikrodata 2R',
       plateNumber: data.plateNumber,
       vehicleType: data.vehicleType,
       entryTime: data.entryTime,
