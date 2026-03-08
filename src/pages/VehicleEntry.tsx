@@ -63,21 +63,33 @@ const VehicleEntry = () => {
     }
 
     setLoading(true);
+    setReceiptData(null);
     try {
+      const entryTime = new Date().toISOString();
+      const savedPlate = plateNumber.toUpperCase().trim();
       const { error } = await supabase.from('transactions').insert({
-        plate_number: plateNumber.toUpperCase().trim(),
+        plate_number: savedPlate,
         vehicle_type: vehicleType,
-        entry_time: new Date().toISOString(),
+        entry_time: entryTime,
         created_by: user?.id,
         card_id: cardId,
       });
 
       if (error) throw error;
 
-      toast.success(`${plateNumber.toUpperCase()} berhasil masuk!`);
+      setReceiptData({
+        plateNumber: savedPlate,
+        vehicleType,
+        entryTime,
+        cardCode: cardCode || undefined,
+        ownerName: ownerName || undefined,
+      });
+
+      toast.success(`${savedPlate} berhasil masuk!`);
       setPlateNumber('');
       setCardId(null);
       setCardCode('');
+      setOwnerName(null);
     } catch (err: any) {
       toast.error(err.message || 'Gagal mencatat kendaraan masuk');
     } finally {
