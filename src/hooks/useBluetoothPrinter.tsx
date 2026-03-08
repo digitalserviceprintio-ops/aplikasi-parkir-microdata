@@ -43,7 +43,7 @@ export function buildEntryTicket(opts: {
     // Double size + Bold
     ...esc(GS, 0x21, 0x11),
     ...esc(ESC, 0x45, 0x01),
-    ...line(opts.businessName || 'ParkEasy'),
+    ...line(opts.businessName || 'Parkir Mikrodata 2R'),
     // Normal
     ...esc(GS, 0x21, 0x00),
     ...esc(ESC, 0x45, 0x00),
