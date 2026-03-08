@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Car, Bike, HelpCircle, LogIn } from 'lucide-react';
 import QrScanner from '@/components/QrScanner';
+import EntryReceipt from '@/components/EntryReceipt';
 
 const vehicleTypes = [
   { value: 'motor', label: 'Motor', icon: Bike },
@@ -20,8 +21,18 @@ const VehicleEntry = () => {
   const [vehicleType, setVehicleType] = useState('motor');
   const [cardCode, setCardCode] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [cardId, setCardId] = useState<string | null>(null);
+  const [ownerName, setOwnerName] = useState<string | null>(null);
+  const [receiptData, setReceiptData] = useState<any>(null);
+  const [businessName, setBusinessName] = useState('');
+
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      const { data } = await supabase.from('business_profiles').select('business_name').limit(1).maybeSingle();
+      if (data) setBusinessName(data.business_name);
+    };
+    fetchBusiness();
+  }, []);
 
   const handleQrScan = async (code: string) => {
     setCardCode(code);
@@ -35,9 +46,11 @@ const VehicleEntry = () => {
       setCardId(data.id);
       if (data.plate_number) setPlateNumber(data.plate_number);
       setVehicleType(data.vehicle_type);
+      setOwnerName(data.owner_name || null);
       toast.success(`Kartu ditemukan: ${data.owner_name || code}`);
     } else {
       setCardId(null);
+      setOwnerName(null);
       toast.info('Kartu tidak ditemukan, isi manual');
     }
   };
@@ -50,21 +63,33 @@ const VehicleEntry = () => {
     }
 
     setLoading(true);
+    setReceiptData(null);
     try {
+      const entryTime = new Date().toISOString();
+      const savedPlate = plateNumber.toUpperCase().trim();
       const { error } = await supabase.from('transactions').insert({
-        plate_number: plateNumber.toUpperCase().trim(),
+        plate_number: savedPlate,
         vehicle_type: vehicleType,
-        entry_time: new Date().toISOString(),
+        entry_time: entryTime,
         created_by: user?.id,
         card_id: cardId,
       });
 
       if (error) throw error;
 
-      toast.success(`${plateNumber.toUpperCase()} berhasil masuk!`);
+      setReceiptData({
+        plateNumber: savedPlate,
+        vehicleType,
+        entryTime,
+        cardCode: cardCode || undefined,
+        ownerName: ownerName || undefined,
+      });
+
+      toast.success(`${savedPlate} berhasil masuk!`);
       setPlateNumber('');
       setCardId(null);
       setCardCode('');
+      setOwnerName(null);
     } catch (err: any) {
       toast.error(err.message || 'Gagal mencatat kendaraan masuk');
     } finally {
@@ -118,6 +143,16 @@ const VehicleEntry = () => {
           {loading ? 'Menyimpan...' : 'Catat Masuk'}
         </Button>
       </form>
+
+      {receiptData && (
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-muted-foreground">Tiket Masuk</h2>
+          <EntryReceipt data={receiptData} businessName={businessName} />
+          <Button variant="ghost" className="w-full text-sm" onClick={() => setReceiptData(null)}>
+            Tutup Tiket
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
