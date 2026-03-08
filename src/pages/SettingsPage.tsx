@@ -161,7 +161,8 @@ const SettingsPage = () => {
     }
     setPrinterConnecting(true);
     try {
-      const device = await navigator.bluetooth.requestDevice({
+      const bt = (navigator as any).bluetooth;
+      const device = await bt.requestDevice({
         acceptAllDevices: true,
         optionalServices: [THERMAL_PRINTER_SERVICE],
       });
