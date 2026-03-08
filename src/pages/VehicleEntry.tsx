@@ -143,6 +143,16 @@ const VehicleEntry = () => {
           {loading ? 'Menyimpan...' : 'Catat Masuk'}
         </Button>
       </form>
+
+      {receiptData && (
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-muted-foreground">Tiket Masuk</h2>
+          <EntryReceipt data={receiptData} businessName={businessName} />
+          <Button variant="ghost" className="w-full text-sm" onClick={() => setReceiptData(null)}>
+            Tutup Tiket
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
