@@ -336,7 +336,7 @@ const SettingsPage = () => {
                 <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl ${tab.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
                   <tab.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <p className="font-semibold text-[10px] sm:text-[15px] leading-tight truncate w-full">{tab.label}</p>
+                <p className="font-semibold text-[10px] sm:text-[15px] leading-tight truncate w-full"><span className="sm:hidden">{tab.shortLabel}</span><span className="hidden sm:inline">{tab.label}</span></p>
                 <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-snug line-clamp-2 hidden sm:block">{tab.desc}</p>
               </motion.button>
             ))}
