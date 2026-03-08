@@ -78,7 +78,10 @@ const SettingsPage = () => {
     Number(localStorage.getItem('parking_overtime_hours')) || 3
   );
 
-  // Printer (shared hook)
+  // APK download URL
+  const [apkUrl, setApkUrl] = useState(() => localStorage.getItem('apk_download_url') || '');
+  const [apkUrlEditing, setApkUrlEditing] = useState(false);
+
   const {
     isSupported: isBtSupported,
     connected: printerConnected,
@@ -535,10 +538,47 @@ const SettingsPage = () => {
                 <li>Buka aplikasi ParkEasy dari layar utama</li>
                 <li>Login dengan akun yang sudah terdaftar</li>
               </ol>
-              <div className="bg-secondary/50 rounded-lg p-2.5">
-                <p className="text-[10px] sm:text-[11px] text-muted-foreground">
-                  💡 <strong>Tips:</strong> Pastikan versi Android minimal 7.0 (Nougat) ke atas untuk kompatibilitas terbaik.
-                </p>
+              {/* Download Button */}
+              {apkUrl ? (
+                <a href={apkUrl} target="_blank" rel="noopener noreferrer" className="block">
+                  <Button className="w-full h-12 sm:h-14 font-bold text-sm sm:text-base gap-2">
+                    <Download className="w-5 h-5" />
+                    Download APK ParkEasy
+                  </Button>
+                </a>
+              ) : (
+                <div className="bg-muted/50 rounded-lg p-3 text-center">
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Link download APK belum diatur. Atur di bawah.</p>
+                </div>
+              )}
+
+              {/* Admin: Set APK URL */}
+              <div className="bg-secondary/50 rounded-lg p-2.5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+                    💡 <strong>Admin:</strong> Atur link download APK
+                  </p>
+                  <Button variant="ghost" size="sm" className="h-6 text-[10px] px-2" onClick={() => setApkUrlEditing(!apkUrlEditing)}>
+                    {apkUrlEditing ? 'Tutup' : 'Ubah'}
+                  </Button>
+                </div>
+                {apkUrlEditing && (
+                  <div className="flex gap-2">
+                    <Input
+                      value={apkUrl}
+                      onChange={(e) => setApkUrl(e.target.value)}
+                      placeholder="https://link-download-apk.com/parkeasy.apk"
+                      className="h-9 text-xs"
+                    />
+                    <Button size="sm" className="h-9 px-3 shrink-0" onClick={() => {
+                      localStorage.setItem('apk_download_url', apkUrl);
+                      setApkUrlEditing(false);
+                      toast.success('Link APK tersimpan!');
+                    }}>
+                      <Save className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
