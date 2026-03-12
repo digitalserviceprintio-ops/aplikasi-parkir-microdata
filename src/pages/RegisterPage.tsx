@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
-import { Car, UserPlus, Shield, Eye, Users } from 'lucide-react';
+import { Car, UserPlus, Shield, Users } from 'lucide-react';
 import PasswordInput from '@/components/PasswordInput';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,8 +12,7 @@ import LicenseDialog from '@/components/LicenseDialog';
 import { supabase } from '@/integrations/supabase/client';
 
 const roles = [
-  { value: 'attendant', label: 'Petugas Parkir', icon: Users, desc: 'Catat kendaraan masuk & keluar' },
-  { value: 'owner', label: 'Owner', icon: Eye, desc: 'Lihat laporan saja' },
+  { value: 'kasir', label: 'Kasir', icon: Users, desc: 'Catat kendaraan masuk & keluar' },
   { value: 'admin', label: 'Admin', icon: Shield, desc: 'Akses penuh ke semua fitur' },
 ];
 
@@ -23,7 +22,7 @@ const RegisterPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('attendant');
+  const [role, setRole] = useState('kasir');
   const [licenseKey, setLicenseKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [showLicenseDialog, setShowLicenseDialog] = useState(false);

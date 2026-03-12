@@ -21,8 +21,7 @@ interface UserProfile {
 
 const roleLabels: Record<string, string> = {
   admin: 'Admin',
-  attendant: 'Petugas Parkir',
-  owner: 'Owner',
+  kasir: 'Kasir',
 };
 
 const UserManagement = () => {
@@ -41,7 +40,7 @@ const UserManagement = () => {
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formPassword, setFormPassword] = useState('');
-  const [formRole, setFormRole] = useState('attendant');
+  const [formRole, setFormRole] = useState('kasir');
   const [formLoading, setFormLoading] = useState(false);
 
   // Edit form
@@ -94,7 +93,7 @@ const UserManagement = () => {
     setFormName('');
     setFormEmail('');
     setFormPassword('');
-    setFormRole('attendant');
+    setFormRole('kasir');
   };
 
   const openEditDialog = (user: UserProfile) => {
@@ -309,7 +308,7 @@ const UserManagement = () => {
               <UserPlus className="w-5 h-5 text-primary" />
               Tambah User Baru
             </DialogTitle>
-            <DialogDescription>Buat akun baru untuk petugas parkir atau admin</DialogDescription>
+            <DialogDescription>Buat akun baru untuk kasir atau admin</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <div className="space-y-1">
@@ -332,12 +331,11 @@ const UserManagement = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="attendant">Petugas Parkir</SelectItem>
-                  <SelectItem value="owner">Owner</SelectItem>
+                  <SelectItem value="kasir">Kasir</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-[10px] text-muted-foreground mt-1">
-                Petugas Parkir hanya bisa mencatat kendaraan masuk/keluar dan kelola kartu member.
+                Kasir hanya bisa mencatat kendaraan masuk/keluar dan kelola kartu member.
               </p>
             </div>
           </div>
@@ -373,8 +371,7 @@ const UserManagement = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="attendant">Petugas Parkir</SelectItem>
-                  <SelectItem value="owner">Owner</SelectItem>
+                  <SelectItem value="kasir">Kasir</SelectItem>
                 </SelectContent>
               </Select>
             </div>
