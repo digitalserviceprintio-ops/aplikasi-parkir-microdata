@@ -650,7 +650,7 @@ const SettingsPage = () => {
                 <li>Buka file APK di HP Android Anda</li>
                 <li>Jika muncul peringatan keamanan, buka <strong>Pengaturan → Keamanan → Sumber Tidak Dikenal</strong> dan aktifkan</li>
                 <li>Ketuk <strong>"Install"</strong> dan tunggu proses selesai</li>
-                <li>Buka aplikasi Parkir Mikrodata 2R dari layar utama</li>
+                <li>Buka aplikasi MD2R Manajemen Parkir dari layar utama</li>
                 <li>Login dengan akun yang sudah terdaftar</li>
               </ol>
               {/* Download Button */}
