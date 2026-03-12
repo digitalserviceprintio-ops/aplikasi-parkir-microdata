@@ -204,7 +204,7 @@ const SettingsPage = () => {
       }
 
       const backupData = {
-        app: 'Parkir Mikrodata 2R',
+        app: 'MD2R Manajemen Parkir',
         version: getAppVersion(),
         exported_at: new Date().toISOString(),
         tables: backup,
