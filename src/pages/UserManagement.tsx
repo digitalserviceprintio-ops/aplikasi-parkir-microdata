@@ -21,8 +21,7 @@ interface UserProfile {
 
 const roleLabels: Record<string, string> = {
   admin: 'Admin',
-  attendant: 'Petugas Parkir',
-  owner: 'Owner',
+  kasir: 'Kasir',
 };
 
 const UserManagement = () => {
