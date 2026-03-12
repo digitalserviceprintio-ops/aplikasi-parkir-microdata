@@ -43,7 +43,7 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
   };
 
   const handlePrint = () => {
-    const name = businessName || 'Parkir Mikrodata 2R';
+    const name = businessName || 'MD2R Manajemen Parkir';
     const html = `
       <html>
         <head>
