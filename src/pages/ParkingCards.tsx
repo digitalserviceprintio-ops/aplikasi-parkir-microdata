@@ -26,6 +26,9 @@ const ParkingCards = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<ParkingCard | null>(null);
+  const [businessName, setBusinessName] = useState('MD2R Manajemen Parkir');
+  const [businessAddress, setBusinessAddress] = useState('');
+  const [businessPhone, setBusinessPhone] = useState('');
 
   // Form state
   const [cardCode, setCardCode] = useState('');
@@ -43,6 +46,25 @@ const ParkingCards = () => {
     if (error) toast.error(error.message);
     setLoading(false);
   };
+
+  useEffect(() => { fetchCards(); }, []);
+
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('business_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (data) {
+        setBusinessName(data.business_name || 'MD2R Manajemen Parkir');
+        setBusinessAddress(data.address || '');
+        setBusinessPhone(data.phone || '');
+      }
+    };
+    fetchBusiness();
+  }, [user]);
 
   useEffect(() => { fetchCards(); }, []);
 
