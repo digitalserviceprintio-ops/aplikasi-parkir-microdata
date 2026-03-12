@@ -308,7 +308,7 @@ const UserManagement = () => {
               <UserPlus className="w-5 h-5 text-primary" />
               Tambah User Baru
             </DialogTitle>
-            <DialogDescription>Buat akun baru untuk petugas parkir atau admin</DialogDescription>
+            <DialogDescription>Buat akun baru untuk kasir atau admin</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <div className="space-y-1">
