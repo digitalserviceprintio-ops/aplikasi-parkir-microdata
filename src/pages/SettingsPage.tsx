@@ -642,7 +642,7 @@ const SettingsPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-sm">Install di Android (APK)</h3>
-                  <p className="text-[11px] sm:text-xs text-muted-foreground">Cara install aplikasi Parkir Mikrodata 2R di HP Android</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Cara install aplikasi MD2R Manajemen Parkir di HP Android</p>
                 </div>
               </div>
               <ol className="text-[11px] sm:text-xs text-muted-foreground space-y-2 list-decimal list-inside">
