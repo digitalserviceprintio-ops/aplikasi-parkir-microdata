@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { CreditCard, Plus, Trash2, QrCode, Download } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
 
 interface ParkingCard {
   id: string;
@@ -26,6 +26,9 @@ const ParkingCards = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<ParkingCard | null>(null);
+  const [businessName, setBusinessName] = useState('MD2R Manajemen Parkir');
+  const [businessAddress, setBusinessAddress] = useState('');
+  const [businessPhone, setBusinessPhone] = useState('');
 
   // Form state
   const [cardCode, setCardCode] = useState('');
@@ -43,6 +46,25 @@ const ParkingCards = () => {
     if (error) toast.error(error.message);
     setLoading(false);
   };
+
+  useEffect(() => { fetchCards(); }, []);
+
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('business_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (data) {
+        setBusinessName(data.business_name || 'MD2R Manajemen Parkir');
+        setBusinessAddress(data.address || '');
+        setBusinessPhone(data.phone || '');
+      }
+    };
+    fetchBusiness();
+  }, [user]);
 
   useEffect(() => { fetchCards(); }, []);
 
@@ -84,23 +106,139 @@ const ParkingCards = () => {
   };
 
   const downloadQr = (card: ParkingCard) => {
-    const svg = document.querySelector('#qr-download-area svg') as SVGElement;
-    if (!svg) return;
-    const svgData = new XMLSerializer().serializeToString(svg);
     const canvas = document.createElement('canvas');
-    canvas.width = 400; canvas.height = 400;
+    const w = 400;
+    const padding = 24;
+    const qrSize = 240;
+    // Calculate height dynamically
+    let totalH = padding; // top padding
+    totalH += 24; // business name
+    if (businessAddress) totalH += 16;
+    if (businessPhone) totalH += 16;
+    totalH += 12; // gap after header
+    totalH += 2; // separator line
+    totalH += 16; // gap before QR
+    totalH += qrSize; // QR code
+    totalH += 16; // gap after QR
+    totalH += 18; // card code
+    if (card.owner_name) totalH += 16;
+    if (card.plate_number) totalH += 16;
+    totalH += 8; // gap
+    totalH += 14; // vehicle type
+    totalH += 12; // gap
+    totalH += 2; // separator
+    totalH += 12; // gap
+    totalH += 12; // footer text
+    totalH += padding; // bottom padding
+
+    canvas.width = w;
+    canvas.height = totalH;
     const ctx = canvas.getContext('2d')!;
-    const img = new Image();
-    img.onload = () => {
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, 400, 400);
-      ctx.drawImage(img, 0, 0, 400, 400);
-      const a = document.createElement('a');
-      a.download = `${card.card_code}.png`;
-      a.href = canvas.toDataURL('image/png');
-      a.click();
-    };
-    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+
+    // Background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, totalH);
+
+    let y = padding;
+
+    // Business name
+    ctx.fillStyle = '#111827';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(businessName, w / 2, y + 16);
+    y += 24;
+
+    // Address
+    if (businessAddress) {
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '11px sans-serif';
+      ctx.fillText(businessAddress, w / 2, y + 11);
+      y += 16;
+    }
+
+    // Phone
+    if (businessPhone) {
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '11px sans-serif';
+      ctx.fillText(businessPhone, w / 2, y + 11);
+      y += 16;
+    }
+
+    y += 12;
+
+    // Separator
+    ctx.strokeStyle = '#d1d5db';
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(w - padding, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    y += 2;
+
+    y += 16;
+
+    // Draw QR code from hidden canvas
+    const qrCanvas = document.querySelector('#qr-hidden-canvas canvas') as HTMLCanvasElement;
+    if (qrCanvas) {
+      ctx.drawImage(qrCanvas, (w - qrSize) / 2, y, qrSize, qrSize);
+    }
+    y += qrSize + 16;
+
+    // Card code
+    ctx.fillStyle = '#111827';
+    ctx.font = 'bold 14px monospace';
+    ctx.fillText(card.card_code, w / 2, y + 12);
+    y += 18;
+
+    // Owner name
+    if (card.owner_name) {
+      ctx.fillStyle = '#374151';
+      ctx.font = '12px sans-serif';
+      ctx.fillText(card.owner_name, w / 2, y + 11);
+      y += 16;
+    }
+
+    // Plate number
+    if (card.plate_number) {
+      ctx.fillStyle = '#111827';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText(card.plate_number, w / 2, y + 11);
+      y += 16;
+    }
+
+    y += 8;
+
+    // Vehicle type
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(card.vehicle_type.charAt(0).toUpperCase() + card.vehicle_type.slice(1), w / 2, y + 10);
+    y += 14;
+
+    y += 12;
+
+    // Bottom separator
+    ctx.strokeStyle = '#d1d5db';
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(w - padding, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    y += 2;
+
+    y += 12;
+
+    // Footer
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('Kartu Member Parkir', w / 2, y + 9);
+
+    // Download
+    const a = document.createElement('a');
+    a.download = `${card.card_code}.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
   };
 
   return (
@@ -157,16 +295,29 @@ const ParkingCards = () => {
       <Dialog open={!!selectedCard} onOpenChange={() => setSelectedCard(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>QR Code Kartu</DialogTitle>
+            <DialogTitle>QR Code Kartu Member</DialogTitle>
           </DialogHeader>
       {selectedCard && (
-            <div className="flex flex-col items-center gap-4 py-4">
-              <div id="qr-download-area">
+            <div className="flex flex-col items-center gap-3 py-4">
+              {/* Business profile header */}
+              <div className="text-center space-y-0.5">
+                <p className="font-bold text-sm">{businessName}</p>
+                {businessAddress && <p className="text-[11px] text-muted-foreground">{businessAddress}</p>}
+                {businessPhone && <p className="text-[11px] text-muted-foreground">{businessPhone}</p>}
+              </div>
+              <div className="w-full border-t border-dashed border-border" />
+              <div>
                 <QRCodeSVG value={selectedCard.card_code} size={200} />
+              </div>
+              {/* Hidden canvas for download */}
+              <div id="qr-hidden-canvas" className="hidden">
+                <QRCodeCanvas value={selectedCard.card_code} size={480} level="M" />
               </div>
               <p className="font-mono text-sm font-bold">{selectedCard.card_code}</p>
               {selectedCard.owner_name && <p className="text-sm text-muted-foreground">{selectedCard.owner_name}</p>}
               {selectedCard.plate_number && <p className="text-sm font-semibold">{selectedCard.plate_number}</p>}
+              <p className="text-xs text-muted-foreground capitalize">{selectedCard.vehicle_type}</p>
+              <div className="w-full border-t border-dashed border-border" />
               <Button variant="outline" size="sm" onClick={() => downloadQr(selectedCard)}>
                 <Download className="w-4 h-4 mr-1" />
                 Download QR
