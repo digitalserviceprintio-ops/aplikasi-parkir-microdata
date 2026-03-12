@@ -22,7 +22,7 @@ const RegisterPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('attendant');
+  const [role, setRole] = useState('kasir');
   const [licenseKey, setLicenseKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [showLicenseDialog, setShowLicenseDialog] = useState(false);

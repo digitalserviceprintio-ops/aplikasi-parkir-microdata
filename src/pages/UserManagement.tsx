@@ -371,8 +371,7 @@ const UserManagement = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="attendant">Petugas Parkir</SelectItem>
-                  <SelectItem value="owner">Owner</SelectItem>
+                  <SelectItem value="kasir">Kasir</SelectItem>
                 </SelectContent>
               </Select>
             </div>

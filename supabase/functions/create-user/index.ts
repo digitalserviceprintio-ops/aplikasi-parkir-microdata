@@ -46,7 +46,7 @@ serve(async (req) => {
       email,
       password,
       email_confirm: true,
-      user_metadata: { name, role: role || "attendant" },
+      user_metadata: { name, role: role || "kasir" },
     });
 
     if (createError) throw createError;

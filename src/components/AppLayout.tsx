@@ -11,11 +11,11 @@ import { motion } from 'framer-motion';
 import bgSplash from '@/assets/bg-splash.jpg';
 
 const navItems = [
-  { path: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'attendant', 'owner'] },
-  { path: '/entry', label: 'Masuk', icon: LogInIcon, roles: ['admin', 'attendant'] },
-  { path: '/exit', label: 'Keluar', icon: LogOutIcon, roles: ['admin', 'attendant'] },
-  { path: '/cards', label: 'Member', icon: CreditCard, roles: ['admin', 'attendant'] },
-  { path: '/reports', label: 'Laporan', icon: FileText, roles: ['admin', 'owner'] },
+  { path: '/', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'kasir'] },
+  { path: '/entry', label: 'Masuk', icon: LogInIcon, roles: ['admin', 'kasir'] },
+  { path: '/exit', label: 'Keluar', icon: LogOutIcon, roles: ['admin', 'kasir'] },
+  { path: '/cards', label: 'Member', icon: CreditCard, roles: ['admin', 'kasir'] },
+  { path: '/reports', label: 'Laporan', icon: FileText, roles: ['admin'] },
   { path: '/users', label: 'Users', icon: Users, roles: ['admin'] },
 ];
 
