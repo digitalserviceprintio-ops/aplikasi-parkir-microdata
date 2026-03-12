@@ -37,7 +37,7 @@ const EntryReceipt = ({ data, businessName }: { data: EntryReceiptData; business
   };
 
   const handlePrint = () => {
-    const name = businessName || 'Parkir Mikrodata 2R';
+    const name = businessName || 'MD2R Manajemen Parkir';
     const canvas = qrCanvasRef.current?.querySelector('canvas');
     const qrDataUrl = canvas?.toDataURL('image/png') || '';
 
