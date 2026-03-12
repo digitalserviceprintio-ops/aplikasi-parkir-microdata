@@ -94,7 +94,7 @@ const ParkingReceipt = ({ data, businessName }: { data: ReceiptData; businessNam
   return (
     <div className="bg-card rounded-xl border border-border p-4 space-y-2 font-mono text-xs">
       <div className="text-center space-y-1">
-        <p className="font-bold text-sm">{businessName || 'Parkir Mikrodata 2R'}</p>
+        <p className="font-bold text-sm">{businessName || 'MD2R Manajemen Parkir'}</p>
         <div className="border-t border-dashed border-border my-2" />
         <p className="text-lg font-black tracking-widest text-primary">{data.plateNumber}</p>
         <p className="text-muted-foreground capitalize">{data.vehicleType}</p>

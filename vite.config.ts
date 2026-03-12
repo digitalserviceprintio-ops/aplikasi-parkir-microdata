@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
       },
       manifest: {
-        name: "Parkir Mikrodata 2R - Sistem Parkir Digital",
-        short_name: "Mikrodata 2R",
+        name: "MD2R Manajemen Parkir",
+        short_name: "MD2R Parkir",
         description: "Aplikasi manajemen parkir digital",
         theme_color: "#0f766e",
         background_color: "#f5f7fa",
