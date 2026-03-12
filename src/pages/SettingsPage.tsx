@@ -54,7 +54,7 @@ const faqData = [
 // Test receipt builder using shared hook's format
 function buildTestReceipt(): Uint8Array {
   return buildEntryTicket({
-    businessName: 'Parkir Mikrodata 2R',
+    businessName: 'MD2R Manajemen Parkir',
     plateNumber: 'TES-1234',
     vehicleType: 'motor',
     entryTime: new Date().toISOString(),
@@ -204,7 +204,7 @@ const SettingsPage = () => {
       }
 
       const backupData = {
-        app: 'Parkir Mikrodata 2R',
+        app: 'MD2R Manajemen Parkir',
         version: getAppVersion(),
         exported_at: new Date().toISOString(),
         tables: backup,
@@ -592,7 +592,7 @@ const SettingsPage = () => {
                 <span className="text-xl sm:text-2xl text-primary-foreground font-bold">M</span>
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-bold">Parkir Mikrodata 2R</h2>
+                <h2 className="text-lg sm:text-xl font-bold">MD2R Manajemen Parkir</h2>
                 <p className="text-[11px] sm:text-xs text-muted-foreground">Versi {localStorage.getItem('app_latest_version') || getAppVersion()}</p>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
@@ -620,7 +620,7 @@ const SettingsPage = () => {
             </div>
 
             <div className="bg-card rounded-xl border border-border p-3 sm:p-4 space-y-1.5">
-              <p className="text-[11px] sm:text-xs text-muted-foreground">© {new Date().getFullYear()} Parkir Mikrodata 2R. All rights reserved.</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground">© {new Date().getFullYear()} MD2R Manajemen Parkir. All rights reserved.</p>
             </div>
           </motion.div>
         )}
@@ -642,7 +642,7 @@ const SettingsPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-sm">Install di Android (APK)</h3>
-                  <p className="text-[11px] sm:text-xs text-muted-foreground">Cara install aplikasi Parkir Mikrodata 2R di HP Android</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Cara install aplikasi MD2R Manajemen Parkir di HP Android</p>
                 </div>
               </div>
               <ol className="text-[11px] sm:text-xs text-muted-foreground space-y-2 list-decimal list-inside">
@@ -650,7 +650,7 @@ const SettingsPage = () => {
                 <li>Buka file APK di HP Android Anda</li>
                 <li>Jika muncul peringatan keamanan, buka <strong>Pengaturan → Keamanan → Sumber Tidak Dikenal</strong> dan aktifkan</li>
                 <li>Ketuk <strong>"Install"</strong> dan tunggu proses selesai</li>
-                <li>Buka aplikasi Parkir Mikrodata 2R dari layar utama</li>
+                <li>Buka aplikasi MD2R Manajemen Parkir dari layar utama</li>
                 <li>Login dengan akun yang sudah terdaftar</li>
               </ol>
               {/* Download Button */}
@@ -658,7 +658,7 @@ const SettingsPage = () => {
                 <a href={apkUrl} target="_blank" rel="noopener noreferrer" className="block">
                   <Button className="w-full h-12 sm:h-14 font-bold text-sm sm:text-base gap-2">
                     <Download className="w-5 h-5" />
-                    Download APK Mikrodata 2R
+                    Download APK MD2R
                   </Button>
                 </a>
               ) : (
@@ -736,8 +736,8 @@ const SettingsPage = () => {
               <Accordion type="single" collapsible className="space-y-1">
                 {[
                   { q: 'APK tidak bisa di-install', a: 'Pastikan opsi "Sumber Tidak Dikenal" sudah diaktifkan di Pengaturan HP. Pada Android 8+, izin per-aplikasi bisa diatur di Pengaturan → Aplikasi → Chrome → Install aplikasi yang tidak dikenal.' },
-                  { q: 'Aplikasi tidak bisa login', a: 'Pastikan koneksi internet stabil. Coba bersihkan cache aplikasi di Pengaturan HP → Aplikasi → Parkir Mikrodata 2R → Hapus Cache.' },
-                  { q: 'Kamera/QR scanner tidak berfungsi', a: 'Pastikan izin kamera sudah diberikan. Buka Pengaturan HP → Aplikasi → Parkir Mikrodata 2R → Izin → aktifkan Kamera.' },
+                  { q: 'Aplikasi tidak bisa login', a: 'Pastikan koneksi internet stabil. Coba bersihkan cache aplikasi di Pengaturan HP → Aplikasi → MD2R Manajemen Parkir → Hapus Cache.' },
+                  { q: 'Kamera/QR scanner tidak berfungsi', a: 'Pastikan izin kamera sudah diberikan. Buka Pengaturan HP → Aplikasi → MD2R Manajemen Parkir → Izin → aktifkan Kamera.' },
                   { q: 'Printer Bluetooth tidak terdeteksi', a: 'Pastikan printer menyala dan mode Bluetooth aktif. Gunakan browser Chrome untuk kompatibilitas Web Bluetooth terbaik.' },
                 ].map((item, i) => (
                   <AccordionItem key={i} value={`install-faq-${i}`} className="border-b border-border/50 last:border-0">
