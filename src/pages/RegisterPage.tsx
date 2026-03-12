@@ -12,8 +12,7 @@ import LicenseDialog from '@/components/LicenseDialog';
 import { supabase } from '@/integrations/supabase/client';
 
 const roles = [
-  { value: 'attendant', label: 'Petugas Parkir', icon: Users, desc: 'Catat kendaraan masuk & keluar' },
-  { value: 'owner', label: 'Owner', icon: Eye, desc: 'Lihat laporan saja' },
+  { value: 'kasir', label: 'Kasir', icon: Users, desc: 'Catat kendaraan masuk & keluar' },
   { value: 'admin', label: 'Admin', icon: Shield, desc: 'Akses penuh ke semua fitur' },
 ];
 
