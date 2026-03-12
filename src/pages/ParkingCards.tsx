@@ -295,16 +295,29 @@ const ParkingCards = () => {
       <Dialog open={!!selectedCard} onOpenChange={() => setSelectedCard(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>QR Code Kartu</DialogTitle>
+            <DialogTitle>QR Code Kartu Member</DialogTitle>
           </DialogHeader>
       {selectedCard && (
-            <div className="flex flex-col items-center gap-4 py-4">
-              <div id="qr-download-area">
+            <div className="flex flex-col items-center gap-3 py-4">
+              {/* Business profile header */}
+              <div className="text-center space-y-0.5">
+                <p className="font-bold text-sm">{businessName}</p>
+                {businessAddress && <p className="text-[11px] text-muted-foreground">{businessAddress}</p>}
+                {businessPhone && <p className="text-[11px] text-muted-foreground">{businessPhone}</p>}
+              </div>
+              <div className="w-full border-t border-dashed border-border" />
+              <div>
                 <QRCodeSVG value={selectedCard.card_code} size={200} />
+              </div>
+              {/* Hidden canvas for download */}
+              <div id="qr-hidden-canvas" className="hidden">
+                <QRCodeCanvas value={selectedCard.card_code} size={480} level="M" />
               </div>
               <p className="font-mono text-sm font-bold">{selectedCard.card_code}</p>
               {selectedCard.owner_name && <p className="text-sm text-muted-foreground">{selectedCard.owner_name}</p>}
               {selectedCard.plate_number && <p className="text-sm font-semibold">{selectedCard.plate_number}</p>}
+              <p className="text-xs text-muted-foreground capitalize">{selectedCard.vehicle_type}</p>
+              <div className="w-full border-t border-dashed border-border" />
               <Button variant="outline" size="sm" onClick={() => downloadQr(selectedCard)}>
                 <Download className="w-4 h-4 mr-1" />
                 Download QR
