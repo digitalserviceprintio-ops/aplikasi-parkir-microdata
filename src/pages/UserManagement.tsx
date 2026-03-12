@@ -93,7 +93,7 @@ const UserManagement = () => {
     setFormName('');
     setFormEmail('');
     setFormPassword('');
-    setFormRole('attendant');
+    setFormRole('kasir');
   };
 
   const openEditDialog = (user: UserProfile) => {
