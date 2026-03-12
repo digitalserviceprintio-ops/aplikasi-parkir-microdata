@@ -335,7 +335,7 @@ const UserManagement = () => {
                 </SelectContent>
               </Select>
               <p className="text-[10px] text-muted-foreground mt-1">
-                Petugas Parkir hanya bisa mencatat kendaraan masuk/keluar dan kelola kartu member.
+                Kasir hanya bisa mencatat kendaraan masuk/keluar dan kelola kartu member.
               </p>
             </div>
           </div>
