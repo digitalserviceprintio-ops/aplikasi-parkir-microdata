@@ -40,7 +40,7 @@ const UserManagement = () => {
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formPassword, setFormPassword] = useState('');
-  const [formRole, setFormRole] = useState('attendant');
+  const [formRole, setFormRole] = useState('kasir');
   const [formLoading, setFormLoading] = useState(false);
 
   // Edit form
