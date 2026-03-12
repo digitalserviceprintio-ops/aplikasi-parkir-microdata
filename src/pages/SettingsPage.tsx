@@ -658,7 +658,7 @@ const SettingsPage = () => {
                 <a href={apkUrl} target="_blank" rel="noopener noreferrer" className="block">
                   <Button className="w-full h-12 sm:h-14 font-bold text-sm sm:text-base gap-2">
                     <Download className="w-5 h-5" />
-                    Download APK Mikrodata 2R
+                    Download APK MD2R
                   </Button>
                 </a>
               ) : (
