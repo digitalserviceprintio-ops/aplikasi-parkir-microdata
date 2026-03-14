@@ -83,7 +83,9 @@ const LoginPage = () => {
 
     setLoading(true);
     try {
-      await signIn(email, password);
+      // Support login with username "superadmin" mapped to email
+      const loginEmail = email.includes('@') ? email : `${email}@md2r.app`;
+      await signIn(loginEmail, password);
       const daysLeft = getTrialDaysLeft();
       if (!isLicensed() && daysLeft !== null && daysLeft <= 3 && daysLeft > 0) {
         toast.warning(`Masa trial tersisa ${daysLeft} hari. Segera aktifkan lisensi.`);
